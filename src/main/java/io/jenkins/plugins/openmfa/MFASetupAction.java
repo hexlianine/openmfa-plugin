@@ -5,7 +5,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import hudson.Extension;
+import hudson.model.Action;
 import hudson.model.User;
 import hudson.util.Secret;
 import io.jenkins.plugins.openmfa.base.MFAContext;
@@ -17,6 +17,7 @@ import jenkins.model.Jenkins;
 import lombok.extern.java.Log;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
+import org.kohsuke.stapler.HttpResponses.HttpResponseException;
 import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
@@ -30,12 +31,25 @@ import java.util.logging.Level;
  * Action that provides MFA setup interface for users.
  */
 @Log
-@Extension
-public class MFASetupAction implements hudson.model.Action {
+public class MFASetupAction implements Action {
+
+  private final User targetUser;
+
+  public MFASetupAction(User targetUser) {
+    this.targetUser = targetUser;
+  }
+
+  /**
+   * The user whose page this action is mounted under (e.g.
+   * /user/<id>/mfa-setup).
+   */
+  public User getTargetUser() {
+    return targetUser;
+  }
 
   @Override
   public String getIconFileName() {
-    return UIConstants.Icons.SECURE;
+    return null;
   }
 
   @Override
@@ -49,21 +63,41 @@ public class MFASetupAction implements hudson.model.Action {
   }
 
   /**
-   * Gets the current user.
+   * Gets the user this setup page targets.
    */
   public User getCurrentUser() {
-    return User.current();
+    return getTargetUser();
+  }
+
+  private boolean canConfigureTargetUser() {
+    if (targetUser == null) {
+      return false;
+    }
+    User current = User.current();
+    if (
+      current != null && current.getId() != null
+        && current.getId().equals(targetUser.getId())
+    ) {
+      return true;
+    }
+    return Jenkins.get().hasPermission(Jenkins.ADMINISTER);
+  }
+
+  private void requireCanConfigureTargetUser() throws HttpResponseException {
+    if (!canConfigureTargetUser()) {
+      throw HttpResponses.forbidden();
+    }
   }
 
   /**
    * Gets the MFA property for the current user.
    */
   public MFAUserProperty getMFAProperty() throws IOException {
-    User user = getCurrentUser();
-    if (user == null) {
+    requireCanConfigureTargetUser();
+    if (targetUser == null) {
       return null;
     }
-    return MFAUserProperty.getOrCreate(user);
+    return MFAUserProperty.getOrCreate(targetUser);
   }
 
   /**
@@ -115,10 +149,7 @@ public class MFASetupAction implements hudson.model.Action {
    */
   @RequirePOST
   public HttpResponse doEnable() throws IOException {
-    User user = getCurrentUser();
-    if (user == null) {
-      return HttpResponses.forbidden();
-    }
+    requireCanConfigureTargetUser();
 
     var req = Stapler.getCurrentRequest2();
     String secret = req.getParameter(PluginConstants.FormParameters.SECRET);
@@ -131,12 +162,12 @@ public class MFASetupAction implements hudson.model.Action {
         .error(UIConstants.HttpStatus.BAD_REQUEST, "Invalid verification code");
     }
 
-    MFAUserProperty property = MFAUserProperty.getOrCreate(user);
+    MFAUserProperty property = MFAUserProperty.getOrCreate(targetUser);
     property.setSecret(Secret.fromString(secret));
     property.setEnabled(true);
-    user.save();
+    targetUser.save();
 
-    log.info(String.format("MFA enabled for user: %s", user.getId()));
+    log.info(String.format("MFA enabled for user: %s", targetUser.getId()));
 
     return HttpResponses.redirectToDot();
   }
@@ -146,16 +177,13 @@ public class MFASetupAction implements hudson.model.Action {
    */
   @RequirePOST
   public HttpResponse doDisable() throws IOException {
-    User user = getCurrentUser();
-    if (user == null) {
-      return HttpResponses.forbidden();
-    }
+    requireCanConfigureTargetUser();
 
-    MFAUserProperty property = MFAUserProperty.forUser(user);
+    MFAUserProperty property = MFAUserProperty.forUser(targetUser);
     if (property != null) {
       property.setEnabled(false);
-      user.save();
-      log.info(String.format("MFA disabled for user: %s", user.getId()));
+      targetUser.save();
+      log.info(String.format("MFA disabled for user: %s", targetUser.getId()));
     }
 
     return HttpResponses.redirectToDot();
@@ -166,17 +194,14 @@ public class MFASetupAction implements hudson.model.Action {
    */
   @RequirePOST
   public HttpResponse doReset() throws IOException {
-    User user = getCurrentUser();
-    if (user == null) {
-      return HttpResponses.forbidden();
-    }
+    requireCanConfigureTargetUser();
 
-    MFAUserProperty property = MFAUserProperty.getOrCreate(user);
+    MFAUserProperty property = MFAUserProperty.getOrCreate(targetUser);
     property.setSecret(null);
     property.setEnabled(false);
-    user.save();
+    targetUser.save();
 
-    log.info(String.format("MFA reset for user: %s", user.getId()));
+    log.info(String.format("MFA reset for user: %s", targetUser.getId()));
 
     return HttpResponses.redirectToDot();
   }

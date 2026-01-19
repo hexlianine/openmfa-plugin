@@ -1,0 +1,310 @@
+.mfa-container {
+  max-width: 640px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+.mfa-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #0b5394;
+}
+
+.mfa-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.mfa-shield-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #0b5394 0%, #1a73e8 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+}
+
+.mfa-alert {
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.mfa-alert-success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-left: 4px solid #28a745;
+}
+
+.mfa-alert-info {
+  background: linear-gradient(135deg, #e7f3ff 0%, #cce5ff 100%);
+  /* border-left: 4px solid #0b5394; */
+}
+
+.mfa-alert-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.mfa-alert-content strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 4px;
+  color: #1a1a2e;
+}
+
+.mfa-alert-content p {
+  margin: 0;
+  color: #4a4a5a;
+  font-size: 0.9rem;
+}
+
+.mfa-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s ease;
+}
+
+.mfa-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.mfa-step-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mfa-step-number {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #0b5394 0%, #1a73e8 100%);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.mfa-step-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.mfa-card p {
+  margin: 0 0 16px 0;
+  color: #5a5a6a;
+  line-height: 1.5;
+}
+
+.mfa-qr-wrapper {
+  display: inline-block;
+  padding: 16px;
+  background: #fafafa;
+  border: 2px dashed #d0d0d0;
+  border-radius: 12px;
+}
+
+.mfa-qr-wrapper img {
+  display: block;
+  border-radius: 4px;
+}
+
+.mfa-secret-code {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 1rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 14px 18px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  letter-spacing: 2px;
+  word-break: break-all;
+  color: #2d3748;
+}
+
+.mfa-secret-input-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.mfa-secret-input {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.95rem;
+  background: #f8f9fa;
+  padding: 12px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  flex: 1;
+  color: #2d3748;
+  letter-spacing: 1px;
+  cursor: text;
+}
+
+.mfa-secret-input:focus {
+  outline: none;
+  border-color: #0b5394;
+  box-shadow: 0 0 0 3px rgba(11, 83, 148, 0.1);
+}
+
+.mfa-copy-btn {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+}
+
+.mfa-copy-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.mfa-copy-btn.copied {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.mfa-form-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.mfa-form-group label {
+  font-weight: 500;
+  color: #4a4a5a;
+  min-width: 120px;
+}
+
+.mfa-code-input {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 1.5rem;
+  text-align: center;
+  letter-spacing: 8px;
+  padding: 12px 16px;
+  border: 2px solid #d0d0d0;
+  border-radius: 8px;
+  width: 180px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mfa-code-input:focus {
+  outline: none;
+  border-color: #0b5394;
+  box-shadow: 0 0 0 3px rgba(11, 83, 148, 0.15);
+}
+
+.mfa-btn-primary {
+  background: linear-gradient(135deg, #0b5394 0%, #1a73e8 100%);
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mfa-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(11, 83, 148, 0.3);
+}
+
+.mfa-btn-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mfa-btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.mfa-btn-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mfa-btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.mfa-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.mfa-notes {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #f59e0b;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-top: 32px;
+}
+
+.mfa-notes h3 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #92400e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mfa-notes ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #78350f;
+}
+
+.mfa-notes li {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.mfa-notes li:last-child {
+  margin-bottom: 0;
+}

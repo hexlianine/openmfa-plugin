@@ -1,16 +1,21 @@
 package io.jenkins.plugins.openmfa;
 
 import hudson.Extension;
-import hudson.model.UnprotectedRootAction;
+import hudson.model.RootAction;
 import hudson.model.User;
 import io.jenkins.plugins.openmfa.constant.PluginConstants;
 import io.jenkins.plugins.openmfa.constant.UIConstants;
+import jakarta.servlet.http.HttpSession;
+import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.HttpResponses;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
  * Action that provides the MFA login page where users enter their TOTP code.
  */
 @Extension
-public class MFALoginAction implements UnprotectedRootAction {
+public class MFALoginAction implements RootAction {
 
   @Override
   public String getIconFileName() {
@@ -57,5 +62,31 @@ public class MFALoginAction implements UnprotectedRootAction {
    */
   public String getSecurityCheckEndpoint() {
     return PluginConstants.Urls.SECURITY_CHECK_ENDPOINT;
+  }
+
+  /**
+   * Handles TOTP code verification via POST.
+   */
+  @RequirePOST
+  public HttpResponse doVerify() {
+    User user = User.current();
+    if (user == null) {
+      return HttpResponses.forbidden();
+    }
+
+    var req = Stapler.getCurrentRequest2();
+    String totpCode = req.getParameter(PluginConstants.FormParameters.TOTP_CODE);
+
+    MFAUserProperty mfaProperty = MFAUserProperty.forUser(user);
+    if (mfaProperty == null || !mfaProperty.verifyCode(totpCode)) {
+      return HttpResponses.redirectViaContextPath("/" + PluginConstants.Urls.LOGIN_ACTION_URL + "?error=invalid");
+    }
+
+    // Mark MFA as verified in session
+    HttpSession session = req.getSession(true);
+    session.setAttribute(PluginConstants.SessionAttributes.MFA_VERIFIED, true);
+
+    // Redirect to root
+    return HttpResponses.redirectViaContextPath("/");
   }
 }

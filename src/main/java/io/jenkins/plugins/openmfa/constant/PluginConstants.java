@@ -15,9 +15,10 @@ public final class PluginConstants {
    */
   public static final class Urls {
 
-    public static final String LOGIN_ACTION_URL = "openmfa-login";
-    public static final String SETUP_ACTION_URL = "openmfa-setup";
-    public static final String SECURITY_CHECK_ENDPOINT = "/openmfa/security-check";
+    public static final String LOGIN_ACTION_URL = "mfa-login";
+    public static final String SETUP_ACTION_URL = "mfa-setup";
+    public static final String SECURITY_CHECK_ENDPOINT =
+      "/" + LOGIN_ACTION_URL + "/verify";
 
     private Urls() {
     }
@@ -28,7 +29,8 @@ public final class PluginConstants {
    */
   public static final class SessionAttributes {
 
-    public static final String PENDING_AUTH = "openmfa-pending-auth";
+    public static final String PENDING_AUTH = "X-Plugin-OpenMFA-Pending-Auth";
+    public static final String MFA_VERIFIED = "X-Plugin-OpenMFA-Verified";
 
     private SessionAttributes() {
     }
@@ -39,9 +41,9 @@ public final class PluginConstants {
    */
   public static final class FormParameters {
 
-    public static final String TOTP_CODE = "openmfa_totp";
-    public static final String SECRET = "secret";
-    public static final String CODE = "code";
+    public static final String TOTP_CODE = "x-plugin-openmfa-totp";
+    public static final String SECRET = "x-plugin-openmfa-secret";
+    public static final String CODE = "x-plugin-openmfa-code";
 
     private FormParameters() {
     }

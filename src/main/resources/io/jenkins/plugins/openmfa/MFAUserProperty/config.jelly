@@ -1,9 +1,36 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-  <f:entry title="${%config.enabled.title}" field="enabled">
-    <f:checkbox />
-    <f:description>
-      ${%config.enabled.description}
-    </f:description>
-  </f:entry>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+  <f:section title="${%section.title}">
+    <f:entry title="${%config.status.title}">
+      <j:choose>
+        <j:when test="${instance.configured}">
+          <span style="color: green; font-weight: bold;">${%config.status.configured}</span>
+        </j:when>
+        <j:otherwise>
+          <span style="color: orange; font-weight: bold;">${%config.status.notConfigured}</span>
+        </j:otherwise>
+      </j:choose>
+      <f:description>
+        ${%config.status.description}
+      </f:description>
+    </f:entry>
+
+    <f:entry title="${%config.enabled.title}" field="enabled">
+      <f:checkbox />
+      <f:description>
+        ${%config.enabled.description}
+      </f:description>
+    </f:entry>
+
+    <f:entry title="">
+      <div style="margin-top: 10px;">
+        <a href="${rootURL}/user/${instance.user.id}/mfa-setup/" class="jenkins-button">
+          ${%config.setup.link}
+        </a>
+      </div>
+      <f:description>
+        ${%config.setup.description}
+      </f:description>
+    </f:entry>
+  </f:section>
 </j:jelly>

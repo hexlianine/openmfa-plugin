@@ -2,12 +2,11 @@ package io.jenkins.plugins.openmfa;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import hudson.Extension;
 import hudson.model.User;
 import hudson.model.UserProperty;
-import hudson.model.UserPropertyDescriptor;
 import hudson.util.Secret;
 import io.jenkins.plugins.openmfa.base.MFAContext;
+import io.jenkins.plugins.openmfa.constant.PluginConstants;
 import io.jenkins.plugins.openmfa.constant.UIConstants;
 import io.jenkins.plugins.openmfa.service.TOTPService;
 import lombok.Getter;
@@ -39,6 +38,10 @@ public class MFAUserProperty extends UserProperty {
   public MFAUserProperty(Secret secret, boolean enabled) {
     this.secret = secret;
     this.enabled = enabled;
+  }
+
+  public User getUser() {
+    return super.user;
   }
 
   /**
@@ -75,30 +78,14 @@ public class MFAUserProperty extends UserProperty {
     MFAUserProperty property = forUser(user);
     if (property == null) {
       property = new MFAUserProperty();
+      property.setUser(user);
       user.addProperty(property);
     }
     return property;
   }
 
-  @Extension
-  public static class DescriptorImpl extends UserPropertyDescriptor {
-
-    @NonNull
-    @Override
-    public String getDisplayName() {
-      return UIConstants.DisplayNames.MULTI_FACTOR_AUTHENTICATION;
-    }
-
-    @Override
-    public boolean isEnabled() {
-      // This property is always available but configured through the user's security
-      // page
-      return true;
-    }
-
-    @Override
-    public MFAUserProperty newInstance(User user) {
-      return new MFAUserProperty();
-    }
+  @NonNull
+  public String getSetupActionUrl() {
+    return PluginConstants.Urls.SETUP_ACTION_URL;
   }
 }

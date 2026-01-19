@@ -1,6 +1,7 @@
 # General
 .tmp/
 .cursor/
+notes/drafts/
 
 # Maven
 target/
