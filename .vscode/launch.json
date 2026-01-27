@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Debug Jenkins Plugin",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 5005,
+      "preLaunchTask": "maven: hpi:run (debug)"
+    },
+    {
+      "type": "java",
+      "name": "Debug Jenkins Plugin (mvnDebug)",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 8000,
+      "preLaunchTask": "mvnDebug: clean hpi:run"
+    }
+  ]
+}
