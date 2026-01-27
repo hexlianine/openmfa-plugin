@@ -20,7 +20,6 @@ class MFAGlobalConfigurationTest extends JenkinsRule {
     assertNotNull(config);
     assertFalse(config.isRequireMFA());
     assertEquals(UIConstants.Defaults.DEFAULT_ISSUER, config.getIssuer());
-    assertTrue(config.isAllowSelfEnrollment());
     assertEquals(7, config.getGracePeriodDays());
     assertFalse(config.isEnforceForApiTokens());
   }
@@ -54,17 +53,6 @@ class MFAGlobalConfigurationTest extends JenkinsRule {
     // Test null defaults to Jenkins
     config.setIssuer(null);
     assertEquals(UIConstants.Defaults.DEFAULT_ISSUER, config.getIssuer());
-  }
-
-  @Test
-  void testSetAllowSelfEnrollment(JenkinsRule j) {
-    MFAGlobalConfiguration config = MFAGlobalConfiguration.get();
-
-    config.setAllowSelfEnrollment(false);
-    assertFalse(config.isAllowSelfEnrollment());
-
-    config.setAllowSelfEnrollment(true);
-    assertTrue(config.isAllowSelfEnrollment());
   }
 
   @Test
@@ -117,7 +105,6 @@ class MFAGlobalConfigurationTest extends JenkinsRule {
     // Set custom values
     config.setRequireMFA(true);
     config.setIssuer("TestCompany");
-    config.setAllowSelfEnrollment(false);
     config.setGracePeriodDays(30);
     config.setEnforceForApiTokens(true);
     config.save();
@@ -128,7 +115,6 @@ class MFAGlobalConfigurationTest extends JenkinsRule {
     // Verify values persisted
     assertTrue(config.isRequireMFA());
     assertEquals("TestCompany", config.getIssuer());
-    assertFalse(config.isAllowSelfEnrollment());
     assertEquals(30, config.getGracePeriodDays());
     assertTrue(config.isEnforceForApiTokens());
   }
