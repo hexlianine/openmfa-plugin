@@ -30,9 +30,9 @@ public class MFAManagementAction implements RootAction {
   @Override
   public String getIconFileName() {
     // Only show in sidebar for admins
-    // if (Jenkins.get().hasPermission(Jenkins.ADMINISTER)) {
-    //   return "symbol-lock-closed";
-    // }
+    if (Jenkins.get().hasPermission(Jenkins.ADMINISTER)) {
+      return "symbol-lock-closed";
+    }
     return null;
   }
 
