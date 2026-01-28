@@ -1,5 +1,9 @@
 package io.jenkins.plugins.openmfa.service;
 
+import static io.jenkins.plugins.openmfa.constant.TOTPConstants.MILLIS_TO_SECONDS;
+import static io.jenkins.plugins.openmfa.constant.TOTPConstants.TIME_STEP_SECONDS;
+import static io.jenkins.plugins.openmfa.constant.TOTPConstants.TIME_WINDOW_TOLERANCE;
+
 import java.security.SecureRandom;
 
 import javax.crypto.Mac;
@@ -11,11 +15,13 @@ import hudson.util.Secret;
 import io.jenkins.plugins.openmfa.base.MFAException;
 import io.jenkins.plugins.openmfa.base.Service;
 import io.jenkins.plugins.openmfa.constant.TOTPConstants;
+import lombok.extern.java.Log;
 
 /**
  * Service for handling Time-based One-Time Password (TOTP) operations.
  * This service is automatically registered and managed by MFAContext.
  */
+@Log
 @Service
 public class TOTPService {
 
@@ -46,8 +52,8 @@ public class TOTPService {
     return generateTOTP(
       secret,
       System.currentTimeMillis()
-        / TOTPConstants.MILLIS_TO_SECONDS
-        / TOTPConstants.TIME_STEP_SECONDS
+        / MILLIS_TO_SECONDS
+        / TIME_STEP_SECONDS
     );
   }
 
@@ -83,13 +89,10 @@ public class TOTPService {
 
     try {
       long currentTimeCounter =
-        System.currentTimeMillis()
-          / TOTPConstants.MILLIS_TO_SECONDS
-          / TOTPConstants.TIME_STEP_SECONDS;
+        System.currentTimeMillis() / MILLIS_TO_SECONDS / TIME_STEP_SECONDS;
 
       // Check current time window and ±1 window (90 seconds total)
-      for (int i =
-        -TOTPConstants.TIME_WINDOW_TOLERANCE; i <= TOTPConstants.TIME_WINDOW_TOLERANCE; i++) {
+      for (int i = -TIME_WINDOW_TOLERANCE; i <= TIME_WINDOW_TOLERANCE; i++) {
         String generatedCode = generateTOTP(secret, currentTimeCounter + i);
         if (generatedCode.equals(code)) {
           return true;
