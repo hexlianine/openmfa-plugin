@@ -4,10 +4,9 @@ import hudson.Extension;
 import hudson.model.Action;
 import hudson.model.TransientUserActionFactory;
 import hudson.model.User;
-import jenkins.model.Jenkins;
-
 import java.util.Collection;
 import java.util.Collections;
+import jenkins.model.Jenkins;
 
 /**
  * Adds the MFA setup action under user pages: /user/<id>/mfa-setup.

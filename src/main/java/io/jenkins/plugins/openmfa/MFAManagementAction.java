@@ -1,13 +1,5 @@
 package io.jenkins.plugins.openmfa;
 
-import java.io.IOException;
-import java.util.Collection;
-
-import org.kohsuke.stapler.HttpResponse;
-import org.kohsuke.stapler.HttpResponses;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.interceptor.RequirePOST;
-
 import hudson.Extension;
 import hudson.model.RootAction;
 import hudson.model.User;
@@ -17,8 +9,14 @@ import io.jenkins.plugins.openmfa.constant.UIConstants;
 import io.jenkins.plugins.openmfa.service.UserService;
 import io.jenkins.plugins.openmfa.service.model.UserInfo;
 import io.jenkins.plugins.openmfa.util.JenkinsUtil;
+import java.io.IOException;
+import java.util.Collection;
 import jenkins.model.Jenkins;
 import lombok.extern.java.Log;
+import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.HttpResponses;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
  * Root action providing the MFA Management dashboard for administrators.
@@ -28,71 +26,11 @@ import lombok.extern.java.Log;
 @Extension
 public class MFAManagementAction implements RootAction {
 
-  @Override
-  public String getIconFileName() {
-    // Only show in sidebar for admins
-    if (Jenkins.get().hasPermission(Jenkins.ADMINISTER)) {
-      return "symbol-lock-closed";
-    }
-    return null;
-  }
-
-  @Override
-  public String getDisplayName() {
-    return UIConstants.DisplayNames.MFA_MANAGEMENT;
-  }
-
-  @Override
-  public String getUrlName() {
-    return PluginConstants.Urls.MANAGEMENT_ACTION_URL;
-  }
-
-  /**
-   * Checks if the current user has admin permission.
-   * Throws AccessDeniedException if not.
-   */
-  private void checkAdminPermission() {
-    JenkinsUtil.checkAdminPermission();
-  }
-
-  /**
-   * Gets all users with their MFA status.
-   * Called from Jelly view.
-   *
-   * @return Collection of UserMFAInfo objects
-   */
-  public Collection<UserInfo> getAllUsers() {
-    checkAdminPermission();
-    UserService userService = MFAContext.i().getService(UserService.class);
-    return userService.getAllUsersWithMFAStatus();
-  }
-
-  /**
-   * Gets the count of users with MFA enabled.
-   *
-   * @return Number of users with MFA enabled
-   */
-  public long getEnabledCount() {
-    checkAdminPermission();
-    UserService userService = MFAContext.i().getService(UserService.class);
-    return userService.getEnabledMFACount();
-  }
-
-  /**
-   * Gets the total number of users.
-   *
-   * @return Total user count
-   */
-  public long getTotalCount() {
-    checkAdminPermission();
-    UserService userService = MFAContext.i().getService(UserService.class);
-    return userService.getTotalUserCount();
-  }
-
   /**
    * Resets MFA for a specific user.
    *
-   * @param userId The ID of the user to reset MFA for
+   * @param userId
+   *          The ID of the user to reset MFA for
    * @return HTTP response indicating success or failure
    */
   @RequirePOST
@@ -128,5 +66,66 @@ public class MFAManagementAction implements RootAction {
         "Failed to reset MFA: " + e.getMessage()
       );
     }
+  }
+
+  /**
+   * Gets all users with their MFA status.
+   * Called from Jelly view.
+   *
+   * @return Collection of UserMFAInfo objects
+   */
+  public Collection<UserInfo> getAllUsers() {
+    checkAdminPermission();
+    UserService userService = MFAContext.i().getService(UserService.class);
+    return userService.getAllUsersWithMFAStatus();
+  }
+
+  @Override
+  public String getDisplayName() {
+    return UIConstants.DisplayNames.MFA_MANAGEMENT;
+  }
+
+  /**
+   * Gets the count of users with MFA enabled.
+   *
+   * @return Number of users with MFA enabled
+   */
+  public long getEnabledCount() {
+    checkAdminPermission();
+    UserService userService = MFAContext.i().getService(UserService.class);
+    return userService.getEnabledMFACount();
+  }
+
+  @Override
+  public String getIconFileName() {
+    // Only show in sidebar for admins
+    if (Jenkins.get().hasPermission(Jenkins.ADMINISTER)) {
+      return "symbol-lock-closed";
+    }
+    return null;
+  }
+
+  /**
+   * Gets the total number of users.
+   *
+   * @return Total user count
+   */
+  public long getTotalCount() {
+    checkAdminPermission();
+    UserService userService = MFAContext.i().getService(UserService.class);
+    return userService.getTotalUserCount();
+  }
+
+  @Override
+  public String getUrlName() {
+    return PluginConstants.Urls.MANAGEMENT_ACTION_URL;
+  }
+
+  /**
+   * Checks if the current user has admin permission.
+   * Throws AccessDeniedException if not.
+   */
+  private void checkAdminPermission() {
+    JenkinsUtil.checkAdminPermission();
   }
 }

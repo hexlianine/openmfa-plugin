@@ -1,20 +1,17 @@
 package io.jenkins.plugins.openmfa.util;
 
-import java.security.SecureRandom;
-import java.util.Optional;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.commons.codec.binary.Base32;
-
 import hudson.model.User;
 import io.jenkins.plugins.openmfa.MFAGlobalConfiguration;
 import io.jenkins.plugins.openmfa.MFAUserProperty;
 import io.jenkins.plugins.openmfa.base.MFAException;
 import io.jenkins.plugins.openmfa.constant.TOTPConstants;
+import java.security.SecureRandom;
+import java.util.Optional;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.codec.binary.Base32;
 
 /**
  * Utility class for TOTP (Time-based One-Time Password) generation and
@@ -22,43 +19,6 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TOTPUtil {
-
-  /**
-   * Checks if MFA is required for the current user.
-   *
-   * @return true if MFA is required, false otherwise
-   */
-  public static boolean isMFARequired() {
-    Optional<User> user = JenkinsUtil.getCurrentUser();
-    if (user.isPresent()) {
-      MFAUserProperty property = MFAUserProperty.forUser(user.get());
-      return MFAGlobalConfiguration.get().isRequireMFA()
-        || (property != null && property.isEnabled());
-    }
-    return false;
-  }
-
-  /**
-   * Checks if MFA is enabled for the current user.
-   *
-   * @return true if MFA is enabled, false otherwise
-   */
-  public static boolean isMFAEnabled() {
-    return JenkinsUtil.getCurrentUser()
-      .map(TOTPUtil::isMFAEnabled)
-      .orElse(false);
-  }
-
-  /**
-   * Checks if MFA is enabled for the given user.
-   *
-   * @param user the user to check
-   * @return true if MFA is enabled, false otherwise
-   */
-  public static boolean isMFAEnabled(User user) {
-    MFAUserProperty property = MFAUserProperty.forUser(user);
-    return property != null && property.isEnabled();
-  }
 
   /**
    * Generates a random secret key for TOTP.
@@ -76,13 +36,15 @@ public class TOTPUtil {
   /**
    * Generates a TOTP code for the given secret at the current time.
    *
-   * @param secret Base32-encoded secret key
+   * @param secret
+   *          Base32-encoded secret key
    * @return 6-digit TOTP code
    */
   public static String generateTOTP(String secret) {
     return generateTOTP(
       secret,
-      System.currentTimeMillis() / TOTPConstants.MILLIS_TO_SECONDS
+      System.currentTimeMillis()
+        / TOTPConstants.MILLIS_TO_SECONDS
         / TOTPConstants.TIME_STEP_SECONDS
     );
   }
@@ -90,8 +52,10 @@ public class TOTPUtil {
   /**
    * Generates a TOTP code for the given secret and time counter.
    *
-   * @param secret      Base32-encoded secret key
-   * @param timeCounter time counter (usually current time / 30)
+   * @param secret
+   *          Base32-encoded secret key
+   * @param timeCounter
+   *          time counter (usually current time / 30)
    * @return 6-digit TOTP code
    */
   public static String generateTOTP(String secret, long timeCounter) {
@@ -106,10 +70,68 @@ public class TOTPUtil {
   }
 
   /**
+   * Generates the provisioning URI for QR code generation.
+   *
+   * @param username
+   *          Jenkins username
+   * @param secret
+   *          Base32-encoded secret key
+   * @param issuer
+   *          Issuer name (e.g., "Jenkins")
+   * @return otpauth:// URI
+   */
+  public static String getProvisioningUri(
+    String username, String secret, String issuer) {
+    return String.format(
+      TOTPConstants.TOTP_URI_FORMAT, issuer, username, secret.replace("=", ""), issuer
+    );
+  }
+
+  /**
+   * Checks if MFA is enabled for the current user.
+   *
+   * @return true if MFA is enabled, false otherwise
+   */
+  public static boolean isMFAEnabled() {
+    return JenkinsUtil.getCurrentUser()
+      .map(TOTPUtil::isMFAEnabled)
+      .orElse(false);
+  }
+
+  /**
+   * Checks if MFA is enabled for the given user.
+   *
+   * @param user
+   *          the user to check
+   * @return true if MFA is enabled, false otherwise
+   */
+  public static boolean isMFAEnabled(User user) {
+    MFAUserProperty property = MFAUserProperty.forUser(user);
+    return property != null && property.isEnabled();
+  }
+
+  /**
+   * Checks if MFA is required for the current user.
+   *
+   * @return true if MFA is required, false otherwise
+   */
+  public static boolean isMFARequired() {
+    Optional<User> user = JenkinsUtil.getCurrentUser();
+    if (user.isPresent()) {
+      MFAUserProperty property = MFAUserProperty.forUser(user.get());
+      return MFAGlobalConfiguration.get().isRequireMFA()
+        || (property != null && property.isEnabled());
+    }
+    return false;
+  }
+
+  /**
    * Verifies a TOTP code against the secret, allowing for time drift.
    *
-   * @param secret Base32-encoded secret key
-   * @param code   6-digit code to verify
+   * @param secret
+   *          Base32-encoded secret key
+   * @param code
+   *          6-digit code to verify
    * @return true if the code is valid
    */
   public static boolean verifyCode(String secret, String code) {
@@ -119,7 +141,8 @@ public class TOTPUtil {
 
     try {
       long currentTimeCounter =
-        System.currentTimeMillis() / TOTPConstants.MILLIS_TO_SECONDS
+        System.currentTimeMillis()
+          / TOTPConstants.MILLIS_TO_SECONDS
           / TOTPConstants.TIME_STEP_SECONDS;
 
       // Check current time window and ±1 window (90 seconds total)
@@ -137,19 +160,12 @@ public class TOTPUtil {
     return false;
   }
 
-  /**
-   * Generates the provisioning URI for QR code generation.
-   *
-   * @param username Jenkins username
-   * @param secret   Base32-encoded secret key
-   * @param issuer   Issuer name (e.g., "Jenkins")
-   * @return otpauth:// URI
-   */
-  public static String getProvisioningUri(
-    String username, String secret, String issuer) {
-    return String.format(
-      TOTPConstants.TOTP_URI_FORMAT, issuer, username, secret.replace("=", ""), issuer
-    );
+  private static String bytesToHex(byte[] bytes) {
+    StringBuilder sb = new StringBuilder();
+    for (byte b : bytes) {
+      sb.append(String.format(TOTPConstants.HEX_FORMAT, b));
+    }
+    return sb.toString();
   }
 
   private static String generateTOTP(String key, String time, String returnDigits) {
@@ -177,8 +193,9 @@ public class TOTPUtil {
           | (hash[offset + 3] & TOTPConstants.BINARY_OTHER_BYTE_MASK);
 
       int otp =
-        binary % ((int) Math
-          .pow(TOTPConstants.DECIMAL_BASE, Integer.parseInt(returnDigits)));
+        binary
+          % ((int) Math
+            .pow(TOTPConstants.DECIMAL_BASE, Integer.parseInt(returnDigits)));
 
       String result = Integer.toString(otp);
       while (result.length() < Integer.parseInt(returnDigits)) {
@@ -187,18 +204,6 @@ public class TOTPUtil {
       return result;
     } catch (Exception e) {
       throw new MFAException("Error generating TOTP", e);
-    }
-  }
-
-  private static byte[] hmacSha(String crypto, byte[] keyBytes, byte[] text) {
-    try {
-      Mac hmac = Mac.getInstance(crypto);
-      SecretKeySpec macKey =
-        new SecretKeySpec(keyBytes, TOTPConstants.MAC_KEY_ALGORITHM);
-      hmac.init(macKey);
-      return hmac.doFinal(text);
-    } catch (Exception e) {
-      throw new MFAException("Error generating HMAC", e);
     }
   }
 
@@ -213,11 +218,15 @@ public class TOTPUtil {
     return data;
   }
 
-  private static String bytesToHex(byte[] bytes) {
-    StringBuilder sb = new StringBuilder();
-    for (byte b : bytes) {
-      sb.append(String.format(TOTPConstants.HEX_FORMAT, b));
+  private static byte[] hmacSha(String crypto, byte[] keyBytes, byte[] text) {
+    try {
+      Mac hmac = Mac.getInstance(crypto);
+      SecretKeySpec macKey =
+        new SecretKeySpec(keyBytes, TOTPConstants.MAC_KEY_ALGORITHM);
+      hmac.init(macKey);
+      return hmac.doFinal(text);
+    } catch (Exception e) {
+      throw new MFAException("Error generating HMAC", e);
     }
-    return sb.toString();
   }
 }

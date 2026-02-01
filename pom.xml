@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
     <version>5.2099.v68c2f5e27299</version>
-    <relativePath />
+    <relativePath></relativePath>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -24,9 +22,7 @@
       <url>https://opensource.org/license/mit/</url>
     </license>
   </licenses>
-  <scm child.scm.connection.inherit.append.path="false"
-    child.scm.developerConnection.inherit.append.path="false"
-    child.scm.url.inherit.append.path="false">
+  <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
     <connection>scm:git:https://github.com/${gitHubRepo}</connection>
     <developerConnection>scm:git:https://github.com/${gitHubRepo}</developerConnection>
     <tag>${scmTag}</tag>
@@ -52,7 +48,8 @@
     -->
     <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
     <lombok.version>1.18.42</lombok.version>
-    <error-prone.version>2.42.0</error-prone.version>
+    <zxing.version>3.5.3</zxing.version>
+    <bom.version>5804.v80587a_38d937</bom.version>
   </properties>
 
   <dependencyManagement>
@@ -60,7 +57,7 @@
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-${jenkins.baseline}.x</artifactId>
-        <version>5804.v80587a_38d937</version>
+        <version>${bom.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -73,33 +70,19 @@
     <dependency>
       <groupId>com.google.zxing</groupId>
       <artifactId>core</artifactId>
-      <version>3.5.3</version>
+      <version>${zxing.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.zxing</groupId>
       <artifactId>javase</artifactId>
-      <version>3.5.3</version>
+      <version>${zxing.version}</version>
     </dependency>
 
     <!-- Commons Codec for Base32 encoding -->
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.17.1</version>
     </dependency>
-    <!-- LDAP Plugin -->
-    <!-- <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>ldap</artifactId>
-      <version>793.v754d6b_41b_ea_4</version>
-    </dependency> -->
-
-    <!-- Mailer Plugin (required by LDAP) -->
-    <!-- <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>mailer</artifactId>
-      <version>522.va_995fa_cfb_8b_d</version>
-    </dependency> -->
 
     <!-- Lombok -->
     <dependency>
@@ -114,7 +97,7 @@
     <!-- These are needed for the JUnit 5 platform -->
     <dependency>
       <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-launcher</artifactId>
+      <artifactId>junit-platform-commons</artifactId>
       <scope>test</scope>
     </dependency>
     <!-- Provides ConfigurationParamaters and other engine interfaces/classes-->
@@ -125,7 +108,7 @@
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-commons</artifactId>
+      <artifactId>junit-platform-launcher</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -142,4 +125,88 @@
       <url>https://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <configuration combine.self="override">
+          <java>
+            <eclipse>
+              <file>${project.basedir}/fmt.xml</file>
+              <!-- Optional: Enable the Sort Members feature globally. (default: false) -->
+              <sortMembersEnabled>true</sortMembersEnabled>
+              <!-- Optional: Specify the sort order of the member categories. (default:
+                T,SF,SI,SM,F,I,C,M)
+                SF,SI,SM,F,I,C,M,T =
+                Static Fields,
+                Static Initializers,
+                Static Methods,
+                Fields,
+                Initializers,
+                Constructors,
+                Methods,
+                (Nested) Types -->
+              <sortMembersOrder>SF,SI,SM,F,I,C,M,T</sortMembersOrder>
+              <!-- Optional: Enable the reordering of fields, enum constants, and initializers.
+               (default: true) -->
+              <sortMembersDoNotSortFields>false</sortMembersDoNotSortFields>
+              <!-- Optional: Enable reordering of members of the same category by the visibility
+                within the category. (default: false) -->
+              <sortMembersVisibilityOrderEnabled>true</sortMembersVisibilityOrderEnabled>
+              <!-- Optional: Specify the ordering of members of the same category by the visibility
+                within the category. (default: B,V,R,D)
+                B,R,D,V = Public, Protected, Package, Private -->
+              <sortMembersVisibilityOrder>B,R,D,V</sortMembersVisibilityOrder>
+            </eclipse>
+
+            <importOrder></importOrder>
+            <removeUnusedImports></removeUnusedImports>
+            <trimTrailingWhitespace></trimTrailingWhitespace>
+            <endWithNewline></endWithNewline>
+            <!-- yell if any import ends with '*' -->
+            <forbidWildcardImports></forbidWildcardImports>
+            <!-- yell if any module imports are found (Java 25+) -->
+            <forbidModuleImports></forbidModuleImports>
+            <toggleOffOn></toggleOffOn>
+          </java>
+          <pom>
+            <includes>
+              <include>pom.xml</include>
+            </includes>
+            <sortPom>
+              <encoding>UTF-8</encoding>
+              <lineSeparator>${line.separator}</lineSeparator>
+              <expandEmptyElements>true</expandEmptyElements>
+              <spaceBeforeCloseEmptyElement>false</spaceBeforeCloseEmptyElement>
+              <keepBlankLines>true</keepBlankLines>
+              <endWithNewline>true</endWithNewline>
+              <nrOfIndentSpace>2</nrOfIndentSpace>
+              <indentBlankLines>false</indentBlankLines>
+              <indentSchemaLocation>false</indentSchemaLocation>
+              <indentAttribute></indentAttribute>
+              <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
+              <sortOrderFile></sortOrderFile>
+              <sortDependencies></sortDependencies>
+              <sortDependencyManagement></sortDependencyManagement>
+              <sortDependencyExclusions></sortDependencyExclusions>
+              <sortPlugins></sortPlugins>
+              <sortProperties>false</sortProperties>
+              <sortModules>false</sortModules>
+              <sortExecutions>false</sortExecutions>
+            </sortPom>
+          </pom>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>compile</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

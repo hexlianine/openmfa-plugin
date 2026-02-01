@@ -1,10 +1,5 @@
 package io.jenkins.plugins.openmfa;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import hudson.Extension;
 import hudson.model.User;
 import io.jenkins.plugins.openmfa.base.MFAContext;
@@ -21,6 +16,10 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.java.Log;
 
 /**
@@ -58,8 +57,8 @@ public class MFAFilter implements Filter {
     );
 
   @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
-    // No initialization needed
+  public void destroy() {
+    // No cleanup needed
   }
 
   @Override
@@ -97,50 +96,9 @@ public class MFAFilter implements Filter {
     chain.doFilter(req, resp);
   }
 
-  /**
-   * Checks if the request path should be allowed without MFA verification.
-   */
-  private boolean shouldAllowPath(HttpServletRequest req) {
-    String uri = req.getRequestURI();
-    String contextPath = req.getContextPath();
-
-    // Remove context path to get the relative path
-    String relativePath = uri;
-    if (
-      contextPath != null && !contextPath.isEmpty() && uri.startsWith(contextPath)
-    ) {
-      relativePath = uri.substring(contextPath.length());
-    }
-
-    // Check if path matches any allowed pattern
-    for (String allowedPath : ALLOWED_PATHS) {
-      if (relativePath.equals(allowedPath) || relativePath.startsWith(allowedPath)) {
-        return true;
-      }
-    }
-
-    if (TOTPUtil.isMFARequired()) {
-      return false;
-    }
-
-    // Allow user-scoped setup page (/user/<id>/mfa-setup and subpaths) without MFA,
-    // otherwise users can get locked out when trying to configure/disable MFA.
-    if (
-      relativePath.matches(
-        "^/user/[^/]+/" + PluginConstants.Urls.SETUP_ACTION_URL + "($|/.*)"
-      )
-    ) {
-      return true;
-    }
-
-    // Allow user-scoped security page (/user/<id>/security and subpaths) without
-    // MFA,
-    // otherwise users cannot access their security configuration page.
-    if (relativePath.matches("^/user/[^/]+/security($|/.*)")) {
-      return true;
-    }
-
-    return false;
+  @Override
+  public void init(FilterConfig filterConfig) throws ServletException {
+    // No initialization needed
   }
 
   /**
@@ -224,8 +182,49 @@ public class MFAFilter implements Filter {
     return false;
   }
 
-  @Override
-  public void destroy() {
-    // No cleanup needed
+  /**
+   * Checks if the request path should be allowed without MFA verification.
+   */
+  private boolean shouldAllowPath(HttpServletRequest req) {
+    String uri = req.getRequestURI();
+    String contextPath = req.getContextPath();
+
+    // Remove context path to get the relative path
+    String relativePath = uri;
+    if (
+      contextPath != null && !contextPath.isEmpty() && uri.startsWith(contextPath)
+    ) {
+      relativePath = uri.substring(contextPath.length());
+    }
+
+    // Check if path matches any allowed pattern
+    for (String allowedPath : ALLOWED_PATHS) {
+      if (relativePath.equals(allowedPath) || relativePath.startsWith(allowedPath)) {
+        return true;
+      }
+    }
+
+    if (TOTPUtil.isMFARequired()) {
+      return false;
+    }
+
+    // Allow user-scoped setup page (/user/<id>/mfa-setup and subpaths) without MFA,
+    // otherwise users can get locked out when trying to configure/disable MFA.
+    if (
+      relativePath.matches(
+        "^/user/[^/]+/" + PluginConstants.Urls.SETUP_ACTION_URL + "($|/.*)"
+      )
+    ) {
+      return true;
+    }
+
+    // Allow user-scoped security page (/user/<id>/security and subpaths) without
+    // MFA,
+    // otherwise users cannot access their security configuration page.
+    if (relativePath.matches("^/user/[^/]+/security($|/.*)")) {
+      return true;
+    }
+
+    return false;
   }
 }

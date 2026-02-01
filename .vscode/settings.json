@@ -14,5 +14,6 @@
   "java.compile.nullAnalysis.mode": "automatic",
   "[java]": {
     "editor.formatOnSaveMode": "modifications",
-  }
+  },
+  "java.configuration.updateBuildConfiguration": "automatic"
 }

@@ -1,10 +1,5 @@
 package io.jenkins.plugins.openmfa;
 
-import java.io.IOException;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -14,8 +9,11 @@ import hudson.util.Secret;
 import io.jenkins.plugins.openmfa.base.MFAContext;
 import io.jenkins.plugins.openmfa.constant.PluginConstants;
 import io.jenkins.plugins.openmfa.service.TOTPService;
+import java.io.IOException;
 import lombok.Getter;
 import lombok.Setter;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * User property to store MFA secret and status.
@@ -24,45 +22,11 @@ import lombok.Setter;
 @Setter
 public class MFAUserProperty extends UserProperty {
 
-  @CheckForNull
-  @DataBoundSetter
-  private Secret secret;
-
-  @DataBoundConstructor
-  public MFAUserProperty() {
-  }
-
-  public MFAUserProperty(Secret secret) {
-    this.secret = secret;
-  }
-
-  public User getUser() {
-    return super.user;
-  }
-
-  /**
-   * Check if MFA is enabled for this user.
-   */
-  public boolean isEnabled() {
-    return secret != null && !Secret.toString(secret).isEmpty();
-  }
-
-  /**
-   * Verify a TOTP code for this user.
-   */
-  public boolean verifyCode(String code) {
-    if (!isEnabled()) {
-      return false;
-    }
-    return MFAContext.i()
-      .getService(TOTPService.class)
-      .verifyCode(secret, code);
-  }
-
   /**
    * Gets the MFA property for a user.
    *
-   * @param user The user to get the property for.
+   * @param user
+   *          The user to get the property for.
    * @return The MFA property for the user, or null if not found.
    */
   @CheckForNull
@@ -87,8 +51,43 @@ public class MFAUserProperty extends UserProperty {
     return property;
   }
 
+  @CheckForNull
+  @DataBoundSetter
+  private Secret secret;
+
+  @DataBoundConstructor
+  public MFAUserProperty() {
+  }
+
+  public MFAUserProperty(Secret secret) {
+    this.secret = secret;
+  }
+
   @NonNull
   public String getSetupActionUrl() {
     return PluginConstants.Urls.SETUP_ACTION_URL;
+  }
+
+  public User getUser() {
+    return super.user;
+  }
+
+  /**
+   * Check if MFA is enabled for this user.
+   */
+  public boolean isEnabled() {
+    return secret != null && !Secret.toString(secret).isEmpty();
+  }
+
+  /**
+   * Verify a TOTP code for this user.
+   */
+  public boolean verifyCode(String code) {
+    if (!isEnabled()) {
+      return false;
+    }
+    return MFAContext.i()
+      .getService(TOTPService.class)
+      .verifyCode(secret, code);
   }
 }

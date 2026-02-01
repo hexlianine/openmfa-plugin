@@ -7,22 +7,20 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import hudson.model.User;
+import hudson.security.ACL;
+import io.jenkins.plugins.openmfa.base.MFAContext;
+import io.jenkins.plugins.openmfa.service.TOTPService;
+import io.jenkins.plugins.openmfa.service.UserService;
+import io.jenkins.plugins.openmfa.service.model.UserInfo;
 import java.util.Collection;
-
+import jenkins.model.Jenkins;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.MockAuthorizationStrategy;
 import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.springframework.security.access.AccessDeniedException;
-
-import hudson.model.User;
-import hudson.security.ACL;
-import io.jenkins.plugins.openmfa.base.MFAContext;
-import io.jenkins.plugins.openmfa.service.UserService;
-import io.jenkins.plugins.openmfa.service.TOTPService;
-import io.jenkins.plugins.openmfa.service.model.UserInfo;
-import jenkins.model.Jenkins;
 
 @WithJenkins
 class MFAManagementActionTest {
@@ -36,16 +34,6 @@ class MFAManagementActionTest {
     action = new MFAManagementAction();
     totpService = MFAContext.i().getService(TOTPService.class);
     userService = MFAContext.i().getService(UserService.class);
-  }
-
-  @Test
-  void testGetDisplayName(JenkinsRule j) {
-    assertEquals("MFA Management", action.getDisplayName());
-  }
-
-  @Test
-  void testGetUrlName(JenkinsRule j) {
-    assertEquals("mfa-management", action.getUrlName());
   }
 
   @Test
@@ -105,17 +93,56 @@ class MFAManagementActionTest {
   }
 
   @Test
-  void testUserMFAInfoStatusText(JenkinsRule j) {
-    // Test enabled status
-    UserInfo enabledUser = new UserInfo("user1", "User One", true);
-    assertEquals("Enabled", enabledUser.getStatusText());
-    assertEquals("mfa-status-enabled", enabledUser.getStatusClass());
+  void testGetDisplayName(JenkinsRule j) {
+    assertEquals("MFA Management", action.getDisplayName());
+  }
 
-    // Test disabled status
-    UserInfo disabledUser =
-      new UserInfo("user2", "User Two", false);
-    assertEquals("Disabled", disabledUser.getStatusText());
-    assertEquals("mfa-status-disabled", disabledUser.getStatusClass());
+  @Test
+  void testGetUrlName(JenkinsRule j) {
+    assertEquals("mfa-management", action.getUrlName());
+  }
+
+  @Test
+  void testIconVisibleOnlyForAdmins(JenkinsRule j) throws Exception {
+    // Configure authorization
+    j.jenkins.setSecurityRealm(j.createDummySecurityRealm());
+    j.jenkins.setAuthorizationStrategy(
+      new MockAuthorizationStrategy()
+        .grant(Jenkins.ADMINISTER).everywhere().to("admin")
+        .grant(Jenkins.READ).everywhere().to("regularuser")
+    );
+
+    // As admin, icon should be visible
+    User admin = User.getById("admin", true);
+    try (var ctx = ACL.as2(admin.impersonate2())) {
+      assertNotNull(action.getIconFileName());
+    }
+
+    // As regular user, icon should be null
+    User regular = User.getById("regularuser", true);
+    try (var ctx = ACL.as2(regular.impersonate2())) {
+      assertNull(action.getIconFileName());
+    }
+  }
+
+  @Test
+  void testMFAUserServiceCounts(JenkinsRule j) throws Exception {
+    // Create users with different MFA states
+    User enabledUser = User.getById("enabled_user", true);
+    MFAUserProperty enabledProp = MFAUserProperty.getOrCreate(enabledUser);
+    enabledProp.setSecret(totpService.generateSecret());
+    enabledUser.save();
+
+    // Create another user without MFA configured
+    User.getById("disabled_user", true);
+
+    // Test counts
+    long total = userService.getTotalUserCount();
+    long enabled = userService.getEnabledMFACount();
+
+    assertTrue(total >= 2);
+    assertTrue(enabled >= 1);
+    assertTrue(enabled <= total);
   }
 
   @Test
@@ -142,45 +169,16 @@ class MFAManagementActionTest {
   }
 
   @Test
-  void testMFAUserServiceCounts(JenkinsRule j) throws Exception {
-    // Create users with different MFA states
-    User enabledUser = User.getById("enabled_user", true);
-    MFAUserProperty enabledProp = MFAUserProperty.getOrCreate(enabledUser);
-    enabledProp.setSecret(totpService.generateSecret());
-    enabledUser.save();
+  void testUserMFAInfoStatusText(JenkinsRule j) {
+    // Test enabled status
+    UserInfo enabledUser = new UserInfo("user1", "User One", true);
+    assertEquals("Enabled", enabledUser.getStatusText());
+    assertEquals("mfa-status-enabled", enabledUser.getStatusClass());
 
-    // Create another user without MFA configured
-    User.getById("disabled_user", true);
-
-    // Test counts
-    long total = userService.getTotalUserCount();
-    long enabled = userService.getEnabledMFACount();
-
-    assertTrue(total >= 2);
-    assertTrue(enabled >= 1);
-    assertTrue(enabled <= total);
-  }
-
-  @Test
-  void testIconVisibleOnlyForAdmins(JenkinsRule j) throws Exception {
-    // Configure authorization
-    j.jenkins.setSecurityRealm(j.createDummySecurityRealm());
-    j.jenkins.setAuthorizationStrategy(
-      new MockAuthorizationStrategy()
-        .grant(Jenkins.ADMINISTER).everywhere().to("admin")
-        .grant(Jenkins.READ).everywhere().to("regularuser")
-    );
-
-    // As admin, icon should be visible
-    User admin = User.getById("admin", true);
-    try (var ctx = ACL.as2(admin.impersonate2())) {
-      assertNotNull(action.getIconFileName());
-    }
-
-    // As regular user, icon should be null
-    User regular = User.getById("regularuser", true);
-    try (var ctx = ACL.as2(regular.impersonate2())) {
-      assertNull(action.getIconFileName());
-    }
+    // Test disabled status
+    UserInfo disabledUser =
+      new UserInfo("user2", "User Two", false);
+    assertEquals("Disabled", disabledUser.getStatusText());
+    assertEquals("mfa-status-disabled", disabledUser.getStatusClass());
   }
 }

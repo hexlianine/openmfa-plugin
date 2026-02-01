@@ -15,192 +15,202 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 @WithJenkins
 class JenkinsBasicInfoTest {
 
-    @Test
-    void testJenkinsInstanceAvailable(JenkinsRule j) {
-        Jenkins jenkins = j.getInstance();
-        assertNotNull(jenkins, "Jenkins instance should be available");
-    }
+  @Test
+  void testAllUsersRetrieval(JenkinsRule j) {
+    // Create some test users
+    User.getById("alluser1", true);
+    User.getById("alluser2", true);
+    User.getById("alluser3", true);
 
-    @Test
-    void testJenkinsVersion(JenkinsRule j) {
-        String version = Jenkins.getVersion().toString();
+    // Get all users
+    var allUsers = User.getAll();
 
-        assertNotNull(version, "Jenkins version should not be null");
-        assertFalse(version.isEmpty(), "Jenkins version should not be empty");
-    }
+    assertNotNull(allUsers, "User list should not be null");
+    assertTrue(allUsers.size() >= 3, "Should have at least 3 users");
+  }
 
-    @Test
-    void testJenkinsRootUrl(JenkinsRule j) throws Exception {
-        Jenkins jenkins = j.getInstance();
-        String rootUrl = jenkins.getRootUrl();
+  @Test
+  void testCreateUser(JenkinsRule j) {
+    String userId = "testuser";
+    User user = User.getById(userId, true);
 
-        assertNotNull(rootUrl, "Jenkins root URL should not be null");
-        assertTrue(rootUrl.startsWith("http"), "Root URL should start with http");
-    }
+    assertNotNull(user, "User should be created");
+    assertEquals(userId, user.getId(), "User ID should match");
+  }
 
-    @Test
-    void testJenkinsSystemMessage(JenkinsRule j) throws Exception {
-        Jenkins jenkins = j.getInstance();
+  @Test
+  void testGetUserByIdWithoutCreating(JenkinsRule j) {
+    String userId = "nonexistentuser";
+    User user = User.getById(userId, false);
 
-        // Set a system message
-        String testMessage = "Test System Message";
-        jenkins.setSystemMessage(testMessage);
+    // User should not be created if second parameter is false
+    assertNull(user, "User should not exist when create=false");
+  }
 
-        assertEquals(testMessage, jenkins.getSystemMessage(), "System message should be retrievable");
-    }
+  @Test
+  void testJenkinsDescription(JenkinsRule j) throws Exception {
+    Jenkins jenkins = j.getInstance();
+    String description = "Test Jenkins Description";
 
-    @Test
-    void testCreateUser(JenkinsRule j) {
-        String userId = "testuser";
-        User user = User.getById(userId, true);
+    jenkins.setSystemMessage(description);
+    assertEquals(description, jenkins.getSystemMessage());
+  }
 
-        assertNotNull(user, "User should be created");
-        assertEquals(userId, user.getId(), "User ID should match");
-    }
+  @Test
+  void testJenkinsInstanceAvailable(JenkinsRule j) {
+    Jenkins jenkins = j.getInstance();
+    assertNotNull(jenkins, "Jenkins instance should be available");
+  }
 
-    @Test
-    void testUserFullName(JenkinsRule j) {
-        String userId = "testuser2";
-        String fullName = "Test User";
+  @Test
+  void testJenkinsNodeName(JenkinsRule j) {
+    Jenkins jenkins = j.getInstance();
+    String nodeName = jenkins.getDisplayName();
 
-        User user = User.getById(userId, true);
-        user.setFullName(fullName);
+    // Built-in node typically has a display name
+    assertNotNull(nodeName, "Node display name should not be null");
+  }
 
-        assertEquals(fullName, user.getFullName(), "User full name should match");
-    }
+  @Test
+  void testJenkinsNumExecutors(JenkinsRule j) {
+    Jenkins jenkins = j.getInstance();
+    int numExecutors = jenkins.getNumExecutors();
 
-    @Test
-    void testMultipleUsers(JenkinsRule j) {
-        User user1 = User.getById("user1", true);
-        User user2 = User.getById("user2", true);
-        User user3 = User.getById("user3", true);
+    // Should have at least one executor
+    assertTrue(numExecutors >= 0, "Number of executors should be non-negative");
+  }
 
-        assertNotNull(user1);
-        assertNotNull(user2);
-        assertNotNull(user3);
+  @Test
+  void testJenkinsQuietMode(JenkinsRule j) {
+    Jenkins jenkins = j.getInstance();
 
-        assertNotEquals(user1.getId(), user2.getId());
-        assertNotEquals(user2.getId(), user3.getId());
-        assertNotEquals(user1.getId(), user3.getId());
-    }
+    // Test entering and exiting quiet mode
+    assertFalse(
+      jenkins.isQuietingDown(), "Jenkins should not be in quiet mode initially"
+    );
 
-    @Test
-    void testJenkinsSecurityEnabled(JenkinsRule j) {
-        Jenkins jenkins = j.getInstance();
+    jenkins.doQuietDown();
+    assertTrue(
+      jenkins.isQuietingDown(), "Jenkins should be in quiet mode after doQuietDown()"
+    );
 
-        // In test environment, security might be disabled by default
-        // Just verify we can check the security status
-        boolean securityEnabled = jenkins.isUseSecurity();
+    jenkins.doCancelQuietDown();
+    assertFalse(
+      jenkins.isQuietingDown(), "Jenkins should not be in quiet mode after cancel"
+    );
+  }
 
-        // Should be able to retrieve the security status without errors
-        assertNotNull(Boolean.valueOf(securityEnabled));
-    }
+  @Test
+  void testJenkinsRootDir(JenkinsRule j) {
+    Jenkins jenkins = j.getInstance();
 
-    @Test
-    void testJenkinsQuietMode(JenkinsRule j) {
-        Jenkins jenkins = j.getInstance();
+    // Test that we can retrieve Jenkins root directory
+    assertNotNull(jenkins.getRootDir(), "Root directory should not be null");
+    assertTrue(jenkins.getRootDir().exists(), "Root directory should exist");
+  }
 
-        // Test entering and exiting quiet mode
-        assertFalse(jenkins.isQuietingDown(), "Jenkins should not be in quiet mode initially");
+  @Test
+  void testJenkinsRootUrl(JenkinsRule j) throws Exception {
+    Jenkins jenkins = j.getInstance();
+    String rootUrl = jenkins.getRootUrl();
 
-        jenkins.doQuietDown();
-        assertTrue(jenkins.isQuietingDown(), "Jenkins should be in quiet mode after doQuietDown()");
+    assertNotNull(rootUrl, "Jenkins root URL should not be null");
+    assertTrue(rootUrl.startsWith("http"), "Root URL should start with http");
+  }
 
-        jenkins.doCancelQuietDown();
-        assertFalse(jenkins.isQuietingDown(), "Jenkins should not be in quiet mode after cancel");
-    }
+  @Test
+  void testJenkinsSecurityEnabled(JenkinsRule j) {
+    Jenkins jenkins = j.getInstance();
 
-    @Test
-    void testJenkinsNodeName(JenkinsRule j) {
-        Jenkins jenkins = j.getInstance();
-        String nodeName = jenkins.getDisplayName();
+    // In test environment, security might be disabled by default
+    // Just verify we can check the security status
+    boolean securityEnabled = jenkins.isUseSecurity();
 
-        // Built-in node typically has a display name
-        assertNotNull(nodeName, "Node display name should not be null");
-    }
+    // Should be able to retrieve the security status without errors
+    assertNotNull(Boolean.valueOf(securityEnabled));
+  }
 
-    @Test
-    void testJenkinsNumExecutors(JenkinsRule j) {
-        Jenkins jenkins = j.getInstance();
-        int numExecutors = jenkins.getNumExecutors();
+  @Test
+  void testJenkinsSystemMessage(JenkinsRule j) throws Exception {
+    Jenkins jenkins = j.getInstance();
 
-        // Should have at least one executor
-        assertTrue(numExecutors >= 0, "Number of executors should be non-negative");
-    }
+    // Set a system message
+    String testMessage = "Test System Message";
+    jenkins.setSystemMessage(testMessage);
 
-    @Test
-    void testUserDirectoryCreation(JenkinsRule j) throws Exception {
-        String userId = "dirTestUser";
-        User user = User.getById(userId, true);
+    assertEquals(
+      testMessage, jenkins.getSystemMessage(), "System message should be retrievable"
+    );
+  }
 
-        assertNotNull(user, "User should be created");
-        // Test that user properties can be set and saved
-        user.setFullName("Directory Test User");
-        user.save();
+  @Test
+  void testJenkinsVersion(JenkinsRule j) {
+    String version = Jenkins.getVersion().toString();
 
-        // Verify we can retrieve the user again after saving
-        User retrievedUser = User.getById(userId, false);
-        assertNotNull(retrievedUser, "User should exist after saving");
-        assertEquals("Directory Test User", retrievedUser.getFullName());
-    }
+    assertNotNull(version, "Jenkins version should not be null");
+    assertFalse(version.isEmpty(), "Jenkins version should not be empty");
+  }
 
-    @Test
-    void testGetUserByIdWithoutCreating(JenkinsRule j) {
-        String userId = "nonexistentuser";
-        User user = User.getById(userId, false);
+  @Test
+  void testJenkinsWorkspaceDir(JenkinsRule j) {
+    Jenkins jenkins = j.getInstance();
 
-        // User should not be created if second parameter is false
-        assertNull(user, "User should not exist when create=false");
-    }
+    assertNotNull(jenkins.getRootDir(), "Jenkins root directory should not be null");
+    assertTrue(jenkins.getRootDir().exists(), "Jenkins root directory should exist");
+    assertTrue(
+      jenkins.getRootDir().isDirectory(), "Jenkins root path should be a directory"
+    );
+  }
 
-    @Test
-    void testJenkinsRootDir(JenkinsRule j) {
-        Jenkins jenkins = j.getInstance();
+  @Test
+  void testMultipleUsers(JenkinsRule j) {
+    User user1 = User.getById("user1", true);
+    User user2 = User.getById("user2", true);
+    User user3 = User.getById("user3", true);
 
-        // Test that we can retrieve Jenkins root directory
-        assertNotNull(jenkins.getRootDir(), "Root directory should not be null");
-        assertTrue(jenkins.getRootDir().exists(), "Root directory should exist");
-    }
+    assertNotNull(user1);
+    assertNotNull(user2);
+    assertNotNull(user3);
 
-    @Test
-    void testJenkinsDescription(JenkinsRule j) throws Exception {
-        Jenkins jenkins = j.getInstance();
-        String description = "Test Jenkins Description";
+    assertNotEquals(user1.getId(), user2.getId());
+    assertNotEquals(user2.getId(), user3.getId());
+    assertNotEquals(user1.getId(), user3.getId());
+  }
 
-        jenkins.setSystemMessage(description);
-        assertEquals(description, jenkins.getSystemMessage());
-    }
+  @Test
+  void testUserDirectoryCreation(JenkinsRule j) throws Exception {
+    String userId = "dirTestUser";
+    User user = User.getById(userId, true);
 
-    @Test
-    void testUserEmailAddress(JenkinsRule j) {
-        String userId = "emailtestuser";
-        User user = User.getById(userId, true);
+    assertNotNull(user, "User should be created");
+    // Test that user properties can be set and saved
+    user.setFullName("Directory Test User");
+    user.save();
 
-        // Test that user can be created and has a valid ID
-        assertNotNull(user);
-        assertEquals(userId, user.getId());
-    }
+    // Verify we can retrieve the user again after saving
+    User retrievedUser = User.getById(userId, false);
+    assertNotNull(retrievedUser, "User should exist after saving");
+    assertEquals("Directory Test User", retrievedUser.getFullName());
+  }
 
-    @Test
-    void testJenkinsWorkspaceDir(JenkinsRule j) {
-        Jenkins jenkins = j.getInstance();
+  @Test
+  void testUserEmailAddress(JenkinsRule j) {
+    String userId = "emailtestuser";
+    User user = User.getById(userId, true);
 
-        assertNotNull(jenkins.getRootDir(), "Jenkins root directory should not be null");
-        assertTrue(jenkins.getRootDir().exists(), "Jenkins root directory should exist");
-        assertTrue(jenkins.getRootDir().isDirectory(), "Jenkins root path should be a directory");
-    }
+    // Test that user can be created and has a valid ID
+    assertNotNull(user);
+    assertEquals(userId, user.getId());
+  }
 
-    @Test
-    void testAllUsersRetrieval(JenkinsRule j) {
-        // Create some test users
-        User.getById("alluser1", true);
-        User.getById("alluser2", true);
-        User.getById("alluser3", true);
+  @Test
+  void testUserFullName(JenkinsRule j) {
+    String userId = "testuser2";
+    String fullName = "Test User";
 
-        // Get all users
-        var allUsers = User.getAll();
+    User user = User.getById(userId, true);
+    user.setFullName(fullName);
 
-        assertNotNull(allUsers, "User list should not be null");
-        assertTrue(allUsers.size() >= 3, "Should have at least 3 users");
-    }
+    assertEquals(fullName, user.getFullName(), "User full name should match");
+  }
 }

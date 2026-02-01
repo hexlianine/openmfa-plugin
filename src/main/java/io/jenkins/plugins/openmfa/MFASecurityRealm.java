@@ -1,8 +1,17 @@
 package io.jenkins.plugins.openmfa;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.Extension;
+import hudson.model.Descriptor;
+import hudson.model.User;
+import hudson.security.SecurityRealm;
+import io.jenkins.plugins.openmfa.constant.UIConstants;
+import io.jenkins.plugins.openmfa.util.TOTPUtil;
 import java.util.ArrayList;
 import java.util.List;
-
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.java.Log;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,17 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import hudson.Extension;
-import hudson.model.Descriptor;
-import hudson.model.User;
-import hudson.security.SecurityRealm;
-import io.jenkins.plugins.openmfa.constant.UIConstants;
-import io.jenkins.plugins.openmfa.util.TOTPUtil;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.java.Log;
 
 /**
  * Security realm that wraps another realm (like LDAP) and adds MFA support.
@@ -34,10 +32,10 @@ public class MFASecurityRealm extends SecurityRealm {
   private SecurityRealm delegate;
 
   @DataBoundSetter
-  private boolean requireMFA = TOTPUtil.isMFARequired();
+  private String issuer = UIConstants.Defaults.DEFAULT_ISSUER;
 
   @DataBoundSetter
-  private String issuer = UIConstants.Defaults.DEFAULT_ISSUER;
+  private boolean requireMFA = TOTPUtil.isMFARequired();
 
   @DataBoundConstructor
   public MFASecurityRealm(SecurityRealm delegate) {
@@ -57,16 +55,46 @@ public class MFASecurityRealm extends SecurityRealm {
   }
 
   @Override
+  public hudson.security.GroupDetails loadGroupByGroupname2(
+    String groupname, boolean includeChildren)
+    throws UsernameNotFoundException {
+    return delegate.loadGroupByGroupname2(groupname, true);
+  }
+
+  @Override
   public UserDetails loadUserByUsername2(String username)
     throws UsernameNotFoundException {
     return delegate.loadUserByUsername2(username);
   }
 
-  @Override
-  public hudson.security.GroupDetails loadGroupByGroupname2(
-    String groupname, boolean includeChildren)
-    throws UsernameNotFoundException {
-    return delegate.loadGroupByGroupname2(groupname, true);
+  @Extension
+  public static class DescriptorImpl extends Descriptor<SecurityRealm> {
+
+    /**
+     * Get all available security realm descriptors except this one.
+     */
+    public List<Descriptor<SecurityRealm>> getAllDescriptors() {
+      List<Descriptor<SecurityRealm>> descriptors = new ArrayList<>();
+      for (Descriptor<SecurityRealm> d : SecurityRealm.all()) {
+        if (d != this) {
+          descriptors.add(d);
+        }
+      }
+      return descriptors;
+    }
+
+    /**
+     * Get the default issuer name (for Jelly views).
+     */
+    public String getDefaultIssuer() {
+      return UIConstants.Defaults.DEFAULT_ISSUER;
+    }
+
+    @NonNull
+    @Override
+    public String getDisplayName() {
+      return UIConstants.DisplayNames.MFA_SECURITY_REALM;
+    }
   }
 
   /**
@@ -143,36 +171,6 @@ public class MFASecurityRealm extends SecurityRealm {
       }
 
       return delegateAuth;
-    }
-  }
-
-  @Extension
-  public static class DescriptorImpl extends Descriptor<SecurityRealm> {
-
-    @NonNull
-    @Override
-    public String getDisplayName() {
-      return UIConstants.DisplayNames.MFA_SECURITY_REALM;
-    }
-
-    /**
-     * Get the default issuer name (for Jelly views).
-     */
-    public String getDefaultIssuer() {
-      return UIConstants.Defaults.DEFAULT_ISSUER;
-    }
-
-    /**
-     * Get all available security realm descriptors except this one.
-     */
-    public List<Descriptor<SecurityRealm>> getAllDescriptors() {
-      List<Descriptor<SecurityRealm>> descriptors = new ArrayList<>();
-      for (Descriptor<SecurityRealm> d : SecurityRealm.all()) {
-        if (d != this) {
-          descriptors.add(d);
-        }
-      }
-      return descriptors;
     }
   }
 }

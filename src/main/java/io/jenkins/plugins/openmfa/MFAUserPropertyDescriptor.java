@@ -19,14 +19,14 @@ public class MFAUserPropertyDescriptor extends UserPropertyDescriptor {
 
   @NonNull
   @Override
-  public UserPropertyCategory getUserPropertyCategory() {
-    return UserPropertyCategory.get(UserPropertyCategory.Security.class);
+  public String getDisplayName() {
+    return UIConstants.DisplayNames.MULTI_FACTOR_AUTHENTICATION;
   }
 
   @NonNull
   @Override
-  public String getDisplayName() {
-    return UIConstants.DisplayNames.MULTI_FACTOR_AUTHENTICATION;
+  public UserPropertyCategory getUserPropertyCategory() {
+    return UserPropertyCategory.get(UserPropertyCategory.Security.class);
   }
 
   @Override

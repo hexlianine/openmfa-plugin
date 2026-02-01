@@ -16,7 +16,8 @@ public class SessionService {
   /**
    * Returns whether the current session has passed MFA verification.
    *
-   * @param session the HTTP session
+   * @param session
+   *          the HTTP session
    * @return true if MFA is verified in this session, false otherwise
    */
   public boolean isVerifiedSession(HttpSession session) {
@@ -30,7 +31,8 @@ public class SessionService {
   /**
    * Marks the session as MFA-verified.
    *
-   * @param session the HTTP session
+   * @param session
+   *          the HTTP session
    */
   public void verifySession(HttpSession session) {
     if (session != null) {

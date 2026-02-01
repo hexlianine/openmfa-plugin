@@ -18,18 +18,15 @@ import static io.jenkins.plugins.openmfa.constant.TOTPConstants.TIME_STEP_SECOND
 import static io.jenkins.plugins.openmfa.constant.TOTPConstants.TIME_WINDOW_TOLERANCE;
 import static io.jenkins.plugins.openmfa.constant.TOTPConstants.TOTP_CODE_DIGITS;
 
-import java.security.SecureRandom;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.commons.codec.binary.Base32;
-
 import hudson.util.Secret;
 import io.jenkins.plugins.openmfa.base.MFAException;
 import io.jenkins.plugins.openmfa.base.Service;
 import io.jenkins.plugins.openmfa.constant.TOTPConstants;
+import java.security.SecureRandom;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import lombok.extern.java.Log;
+import org.apache.commons.codec.binary.Base32;
 
 /**
  * Service for handling Time-based One-Time Password (TOTP) operations.
@@ -59,7 +56,8 @@ public class TOTPService {
   /**
    * Generates a TOTP code for the given secret at the current time.
    *
-   * @param secret Secret containing Base32-encoded secret key
+   * @param secret
+   *          Secret containing Base32-encoded secret key
    * @return 6-digit TOTP code
    */
   public String generateTOTP(Secret secret) {
@@ -74,8 +72,10 @@ public class TOTPService {
   /**
    * Generates a TOTP code for the given secret and step.
    *
-   * @param secret Secret containing Base32-encoded secret key
-   * @param step   step (usually current time / 30)
+   * @param secret
+   *          Secret containing Base32-encoded secret key
+   * @param step
+   *          step (usually current time / 30)
    * @return 6-digit TOTP code
    */
   public String generateTOTP(Secret secret, long step) {
@@ -88,10 +88,47 @@ public class TOTPService {
   }
 
   /**
+   * Generates the provisioning URI for QR code generation.
+   *
+   * @param username
+   *          Jenkins username
+   * @param secret
+   *          Secret containing Base32-encoded secret key
+   * @param issuer
+   *          Issuer name (e.g., "Jenkins")
+   * @return otpauth:// URI
+   */
+  public String getProvisioningUri(String username, Secret secret, String issuer) {
+    String secretPlainText = Secret.toString(secret);
+    return String.format(
+      TOTPConstants.TOTP_URI_FORMAT,
+      issuer,
+      username,
+      secretPlainText.replace("=", ""),
+      issuer
+    );
+  }
+
+  /**
+   * Validates a TOTP code against the given secret.
+   *
+   * @param secret
+   *          Secret containing the secret key
+   * @param code
+   *          the code to validate
+   * @return true if valid, false otherwise
+   */
+  public boolean validateTOTP(Secret secret, String code) {
+    return verifyCode(secret, code);
+  }
+
+  /**
    * Verifies a TOTP code against the secret, allowing for time drift.
    *
-   * @param secret Secret containing Base32-encoded secret key
-   * @param code   6-digit code to verify
+   * @param secret
+   *          Secret containing Base32-encoded secret key
+   * @param code
+   *          6-digit code to verify
    * @return true if the code is valid
    */
   public boolean verifyCode(Secret secret, String code) {
@@ -117,34 +154,12 @@ public class TOTPService {
     return false;
   }
 
-  /**
-   * Validates a TOTP code against the given secret.
-   *
-   * @param secret Secret containing the secret key
-   * @param code   the code to validate
-   * @return true if valid, false otherwise
-   */
-  public boolean validateTOTP(Secret secret, String code) {
-    return verifyCode(secret, code);
-  }
-
-  /**
-   * Generates the provisioning URI for QR code generation.
-   *
-   * @param username Jenkins username
-   * @param secret   Secret containing Base32-encoded secret key
-   * @param issuer   Issuer name (e.g., "Jenkins")
-   * @return otpauth:// URI
-   */
-  public String getProvisioningUri(String username, Secret secret, String issuer) {
-    String secretPlainText = Secret.toString(secret);
-    return String.format(
-      TOTPConstants.TOTP_URI_FORMAT,
-      issuer,
-      username,
-      secretPlainText.replace("=", ""),
-      issuer
-    );
+  private String bytesToHex(byte[] bytes) {
+    StringBuilder sb = new StringBuilder();
+    for (byte b : bytes) {
+      sb.append(String.format(TOTPConstants.HEX_FORMAT, b));
+    }
+    return sb.toString();
   }
 
   private String generateTOTP(String key, String step, int len) {
@@ -183,17 +198,6 @@ public class TOTPService {
     }
   }
 
-  private byte[] hmacSha(String crypto, byte[] keyBytes, byte[] text) {
-    try {
-      Mac hmac = Mac.getInstance(crypto);
-      SecretKeySpec macKey = new SecretKeySpec(keyBytes, MAC_KEY_ALGORITHM);
-      hmac.init(macKey);
-      return hmac.doFinal(text);
-    } catch (Exception e) {
-      throw new MFAException("Error generating HMAC", e);
-    }
-  }
-
   private byte[] hexStringToByteArray(String s) {
     // Ensure even length by padding with leading zero if needed
     String hexString = s;
@@ -211,11 +215,14 @@ public class TOTPService {
     return data;
   }
 
-  private String bytesToHex(byte[] bytes) {
-    StringBuilder sb = new StringBuilder();
-    for (byte b : bytes) {
-      sb.append(String.format(TOTPConstants.HEX_FORMAT, b));
+  private byte[] hmacSha(String crypto, byte[] keyBytes, byte[] text) {
+    try {
+      Mac hmac = Mac.getInstance(crypto);
+      SecretKeySpec macKey = new SecretKeySpec(keyBytes, MAC_KEY_ALGORITHM);
+      hmac.init(macKey);
+      return hmac.doFinal(text);
+    } catch (Exception e) {
+      throw new MFAException("Error generating HMAC", e);
     }
-    return sb.toString();
   }
 }
