@@ -10,3 +10,10 @@ updates:
     directory: /
     schedule:
       interval: monthly
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: monthly
+    # For prek hooks defined in .pre-commit-config.yaml
+    allow:
+      - dependency-type: all

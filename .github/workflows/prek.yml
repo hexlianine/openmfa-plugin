@@ -1,0 +1,34 @@
+# Runs prek (pre-commit) checks on pull requests and pushes
+# See https://prek.j178.dev/ for more information
+---
+name: Prek
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  prek:
+    name: Prek checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Run prek
+        uses: j178/prek-action@v1
+        with:
+          extra-args: --all-files

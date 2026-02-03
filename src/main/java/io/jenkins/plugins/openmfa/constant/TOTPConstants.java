@@ -32,7 +32,7 @@ public final class TOTPConstants {
    * @see <a href="https://tools.ietf.org/html/rfc4226#section-5.3">RFC 4226</a>
    */
   public static final int[] DIGITS_POWER =
-    { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000 };
+    {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000};
 
   /**
    * Characters per hex byte

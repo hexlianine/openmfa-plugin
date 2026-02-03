@@ -135,3 +135,6 @@ logs/
 # Jenkins specific
 .jenkins
 jenkins.war
+
+# prek / pre-commit
+.prek/

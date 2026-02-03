@@ -3,9 +3,6 @@
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "always"
-  },
   "java.format.settings.url": "${workspaceFolder}/fmt.xml",
   "java.format.settings.profile": "CodeStyle",
   "files.associations": {
@@ -13,7 +10,7 @@
   },
   "java.compile.nullAnalysis.mode": "automatic",
   "[java]": {
-    "editor.formatOnSaveMode": "modifications",
+    "editor.formatOnSaveMode": "modifications"
   },
   "java.configuration.updateBuildConfiguration": "automatic"
 }

@@ -1,0 +1,33 @@
+# See https://prek.j178.dev/ for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: builtin
+    hooks:
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: detect-private-key
+      - id: end-of-file-fixer
+        exclude: ^notes/
+      - id: trailing-whitespace
+        exclude: ^notes/
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-yaml
+      - id: check-json
+      - id: check-xml
+      - id: mixed-line-ending
+        args: [--fix=lf]
+        exclude: ^notes/
+
+  - repo: local
+    hooks:
+      - id: spotless
+        name: Spotless Java/POM formatter
+        entry: ./mvnw spotless:apply
+        language: system
+        files: \.(java|xml)$
+        exclude: ^notes/
+        pass_filenames: false
