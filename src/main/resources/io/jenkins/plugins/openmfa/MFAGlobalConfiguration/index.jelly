@@ -18,7 +18,8 @@
     |
     | References for this change:
     |   - Hudson's future: https://www.jenkins.io/blog/2011/01/11/hudsons-future/
-    |   - Hudson and Jenkins: https://stackoverflow.com/questions/4973981/how-to-choose-between-hudson-and-jenkins
+    |   - Hudson and Jenkins:
+    https://stackoverflow.com/questions/4973981/how-to-choose-between-hudson-and-jenkins
     |   - Wikipedia: https://en.wikipedia.org/wiki/Jenkins_(software)#History
     |
     | Many older core APIs and plugins still use the term "Hudson" for historical reasons.
@@ -51,14 +52,6 @@
           <tr>
             <td>${%config.issuer.title}</td>
             <td>${it.issuer}</td>
-          </tr>
-          <tr>
-            <td>${%config.gracePeriodDays.title}</td>
-            <td>${it.gracePeriodDays}</td>
-          </tr>
-          <tr>
-            <td>${%config.enforceForApiTokens.title}</td>
-            <td>${it.enforceForApiTokens ? 'Yes' : 'No'}</td>
           </tr>
         </table>
       </div>

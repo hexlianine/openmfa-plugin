@@ -20,8 +20,6 @@ class MFAGlobalConfigurationTest extends JenkinsRule {
     assertNotNull(config);
     assertFalse(config.isRequireMFA());
     assertEquals(UIConstants.Defaults.DEFAULT_ISSUER, config.getIssuer());
-    assertEquals(7, config.getGracePeriodDays());
-    assertFalse(config.isEnforceForApiTokens());
   }
 
   @Test
@@ -47,8 +45,6 @@ class MFAGlobalConfigurationTest extends JenkinsRule {
     // Set custom values
     config.setRequireMFA(true);
     config.setIssuer("TestCompany");
-    config.setGracePeriodDays(30);
-    config.setEnforceForApiTokens(true);
     config.save();
 
     // Reload configuration
@@ -57,35 +53,6 @@ class MFAGlobalConfigurationTest extends JenkinsRule {
     // Verify values persisted
     assertTrue(config.isRequireMFA());
     assertEquals("TestCompany", config.getIssuer());
-    assertEquals(30, config.getGracePeriodDays());
-    assertTrue(config.isEnforceForApiTokens());
-  }
-
-  @Test
-  void testSetEnforceForApiTokens(JenkinsRule j) {
-    MFAGlobalConfiguration config = MFAGlobalConfiguration.get();
-
-    config.setEnforceForApiTokens(true);
-    assertTrue(config.isEnforceForApiTokens());
-
-    config.setEnforceForApiTokens(false);
-    assertFalse(config.isEnforceForApiTokens());
-  }
-
-  @Test
-  void testSetGracePeriodDays(JenkinsRule j) {
-    MFAGlobalConfiguration config = MFAGlobalConfiguration.get();
-
-    config.setGracePeriodDays(14);
-    assertEquals(14, config.getGracePeriodDays());
-
-    // Test negative values are clamped to 0
-    config.setGracePeriodDays(-5);
-    assertEquals(0, config.getGracePeriodDays());
-
-    // Test zero
-    config.setGracePeriodDays(0);
-    assertEquals(0, config.getGracePeriodDays());
   }
 
   @Test

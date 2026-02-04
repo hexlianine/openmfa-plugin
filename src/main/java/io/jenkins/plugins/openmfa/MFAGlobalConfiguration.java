@@ -29,12 +29,6 @@ public class MFAGlobalConfiguration extends GlobalConfiguration {
     return ExtensionList.lookupSingleton(MFAGlobalConfiguration.class);
   }
 
-  /** Whether to enforce MFA for API tokens */
-  private boolean enforceForApiTokens = false;
-
-  /** Grace period in days for users to set up MFA after it becomes required */
-  private int gracePeriodDays = 7;
-
   /** The issuer name shown in authenticator apps */
   private String issuer = UIConstants.Defaults.DEFAULT_ISSUER;
 
@@ -72,16 +66,6 @@ public class MFAGlobalConfiguration extends GlobalConfiguration {
   @Override
   public String getDisplayName() {
     return UIConstants.DisplayNames.OPENMFA_GLOBAL_CONFIGURATION;
-  }
-
-  @DataBoundSetter
-  public void setEnforceForApiTokens(boolean enforceForApiTokens) {
-    this.enforceForApiTokens = enforceForApiTokens;
-  }
-
-  @DataBoundSetter
-  public void setGracePeriodDays(int gracePeriodDays) {
-    this.gracePeriodDays = Math.max(0, gracePeriodDays);
   }
 
   @DataBoundSetter
