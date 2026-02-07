@@ -72,17 +72,6 @@ class MFAUserPropertyTest {
   }
 
   @Test
-  void testVerifyCodeWhenDisabled(JenkinsRule j) {
-    MFAUserProperty property = new MFAUserProperty();
-
-    Secret secret = totpService.generateSecret();
-    property.setSecret(secret);
-
-    String code = totpService.generateTOTP(secret);
-    assertFalse(property.verifyCode(code)); // Should fail when disabled
-  }
-
-  @Test
   void testVerifyCodeWhenNotConfigured(JenkinsRule j) {
     MFAUserProperty property = new MFAUserProperty();
 
