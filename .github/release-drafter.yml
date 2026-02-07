@@ -2,3 +2,11 @@
 ---
 _extends: .github
 tag-template: open-mfa-$NEXT_MINOR_VERSION
+template: |
+  ## Releases
+
+  ### 🚀 New Features
+  - Feature summaries here
+
+  ### 🛠 Fixes
+  - Fixed issues here
