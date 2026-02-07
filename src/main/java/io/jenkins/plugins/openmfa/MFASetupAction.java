@@ -21,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.logging.Level;
-import jenkins.model.Jenkins;
 import lombok.extern.java.Log;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
@@ -101,13 +100,7 @@ public class MFASetupAction implements Action {
   public String generateQRCode(String username, String encryptedSecret) {
     try {
       Secret secret = Secret.fromString(encryptedSecret);
-
       String issuer = UIConstants.Defaults.DEFAULT_ISSUER;
-      Jenkins jenkins = Jenkins.get();
-      if (jenkins.getSecurityRealm() instanceof MFASecurityRealm) {
-        MFASecurityRealm realm = (MFASecurityRealm) jenkins.getSecurityRealm();
-        issuer = realm.getIssuer();
-      }
 
       TOTPService totpService = MFAContext.i().getService(TOTPService.class);
       String uri = totpService.getProvisioningUri(username, secret, issuer);
