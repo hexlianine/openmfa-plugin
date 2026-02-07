@@ -76,7 +76,7 @@ public class MFAUserProperty extends UserProperty {
    * Check if MFA is enabled for this user.
    */
   public boolean isEnabled() {
-    return secret != null && !Secret.toString(secret).isEmpty();
+    return secret != null && !secret.getPlainText().isEmpty();
   }
 
   /**

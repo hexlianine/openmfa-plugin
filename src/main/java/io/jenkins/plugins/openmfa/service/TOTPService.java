@@ -95,7 +95,7 @@ public class TOTPService {
    */
   public String generateTOTP(Secret secret, long step) {
     Base32 base32 = new Base32();
-    byte[] bytes = base32.decode(Secret.toString(secret));
+    byte[] bytes = base32.decode(secret.getPlainText());
     String hexKey = bytesToHex(bytes);
     String hexTime = Long.toHexString(step);
 
@@ -114,7 +114,7 @@ public class TOTPService {
    * @return otpauth:// URI
    */
   public String getProvisioningUri(String username, Secret secret, String issuer) {
-    String secretPlainText = Secret.toString(secret);
+    String secretPlainText = secret.getPlainText();
     return String.format(
       TOTPConstants.TOTP_URI_FORMAT,
       issuer,
@@ -224,7 +224,7 @@ public class TOTPService {
    * Uses a hash of the secret to avoid storing the actual secret.
    */
   private String generateCacheKey(Secret secret, String code) {
-    return Secret.toString(secret).hashCode() + ":" + code;
+    return secret.getPlainText().hashCode() + ":" + code;
   }
 
   private String generateTOTP(String key, String step, int len) {

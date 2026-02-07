@@ -34,7 +34,7 @@ class TOTPUtilTest {
   void testGenerateSecret() {
     Secret secret = totpService.generateSecret();
     assertNotNull(secret);
-    assertTrue(!Secret.toString(secret).isEmpty());
+    assertTrue(!secret.getPlainText().isEmpty());
   }
 
   @Test
@@ -49,7 +49,7 @@ class TOTPUtilTest {
   @Test
   void testGetProvisioningUri() {
     Secret secret = totpService.generateSecret();
-    String secretPlainText = Secret.toString(secret);
+    String secretPlainText = secret.getPlainText();
     String uri = totpService.getProvisioningUri("testuser", secret, "Jenkins");
 
     assertNotNull(uri);

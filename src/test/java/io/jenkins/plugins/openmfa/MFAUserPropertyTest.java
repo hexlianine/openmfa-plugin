@@ -42,7 +42,7 @@ class MFAUserPropertyTest {
 
     assertTrue(property.isEnabled());
     assertTrue(property.isEnabled());
-    assertEquals(Secret.toString(secret), Secret.toString(property.getSecret()));
+    assertEquals(secret.getPlainText(), property.getSecret().getPlainText());
   }
 
   @Test
