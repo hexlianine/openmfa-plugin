@@ -193,7 +193,7 @@ public class MFAFilter implements Filter {
     }
 
     // MFA is required but not yet verified, redirect to MFA page
-    log.info(
+    log.fine(
       String.format(
         "MFA required for user: %s, current path: %s, redirecting to MFA page",
         username,
