@@ -2,14 +2,6 @@
  * MFAGlobalConfiguration config styles (standalone)
  */
 
-.mfa-config-card {
-  background: var(--mfa-bg-white, #fff);
-  border: 1px solid var(--mfa-border-light, #e0e0e0);
-  border-radius: var(--mfa-radius-lg, 12px);
-  padding: 20px;
-  margin-bottom: 40px;
-}
-
 .mfa-status-row {
   display: flex;
   align-items: center;
