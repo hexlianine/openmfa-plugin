@@ -1,69 +1,61 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:f="/lib/form">
   <l:layout title="${%title}" norefresh="true">
-    <st:adjunct includes="io.jenkins.plugins.openmfa.mfa-variables" />
     <st:adjunct includes="io.jenkins.plugins.openmfa.MFALoginAction.mfa-login-style" />
     <l:main-panel>
       <j:choose>
         <j:when test="${it.hasPendingAuth()}">
-          <!-- Toast for invalid code error -->
-          <div id="mfa-toast" class="mfa-toast mfa-toast-hidden">
-            <span class="mfa-toast-message">${%error.invalid.code}</span>
-          </div>
+          <span id="mfa-invalid-code-msg" style="display:none">${%error.invalid.code}</span>
 
           <!-- Lockout banner -->
-          <div id="mfa-lockout-banner" class="mfa-lockout-banner mfa-lockout-hidden">
+          <div id="mfa-lockout-banner"
+            class="jenkins-banner jenkins-banner--warning mfa-lockout-banner mfa-lockout-hidden">
             <div class="mfa-lockout-content">
-              <svg class="mfa-lockout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
+              <l:icon src="symbol-lock-closed" class="icon-lg" />
               <div class="mfa-lockout-text">
-                <span class="mfa-lockout-title">${%error.locked.title}</span>
-                <span class="mfa-lockout-message"> ${%error.locked.message} <span
-                    id="mfa-lockout-countdown" class="mfa-lockout-countdown"></span>
-                </span>
+                <span>${%error.locked.title}</span>
+                <span>${%error.locked.message} <span id="mfa-lockout-countdown"
+                    class="mfa-lockout-countdown"></span></span>
               </div>
             </div>
           </div>
 
           <div class="mfa-login-container">
-            <div class="mfa-login-card">
-              <div class="mfa-login-icon-wrapper">
-                <svg class="mfa-login-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  stroke-width="2">
-                  <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </div>
+            <div class="jenkins-card jenkins-!-margin-bottom-4"
+              style="max-width: 400px; width: 100%; text-align: center;">
+              <div class="jenkins-card__content">
+                <l:icon src="symbol-lock-closed" class="icon-xl jenkins-!-margin-bottom-4"
+                  style="display: block;" />
+                <h1 class="jenkins-!-margin-bottom-2">${%title}</h1>
+                <p class="jenkins-!-margin-bottom-6" style="color: var(--text-color-secondary);">
+                  ${%prompt}</p>
 
-              <h1 class="mfa-login-title">${%title}</h1>
-              <p class="mfa-login-prompt">${%prompt}</p>
-
-              <form method="post" action="${rootURL}${it.securityCheckEndpoint}">
-                <div class="mfa-login-code-wrapper">
-                  <div class="mfa-login-code-boxes">
-                    <input type="text" class="mfa-login-digit" maxlength="1" data-index="0"
-                      inputmode="numeric" pattern="[0-9]" />
-                    <input type="text" class="mfa-login-digit" maxlength="1" data-index="1"
-                      inputmode="numeric" pattern="[0-9]" />
-                    <input type="text" class="mfa-login-digit" maxlength="1" data-index="2"
-                      inputmode="numeric" pattern="[0-9]" />
-                    <input type="text" class="mfa-login-digit" maxlength="1" data-index="3"
-                      inputmode="numeric" pattern="[0-9]" />
-                    <input type="text" class="mfa-login-digit" maxlength="1" data-index="4"
-                      inputmode="numeric" pattern="[0-9]" />
-                    <input type="text" class="mfa-login-digit" maxlength="1" data-index="5"
-                      inputmode="numeric" pattern="[0-9]" />
+                <form method="post" action="${rootURL}${it.securityCheckEndpoint}">
+                  <div class="mfa-login-code-wrapper">
+                    <div class="mfa-login-code-boxes">
+                      <input type="text" class="mfa-login-digit" maxlength="1" data-index="0"
+                        inputmode="numeric" pattern="[0-9]" />
+                      <input type="text" class="mfa-login-digit" maxlength="1" data-index="1"
+                        inputmode="numeric" pattern="[0-9]" />
+                      <input type="text" class="mfa-login-digit" maxlength="1" data-index="2"
+                        inputmode="numeric" pattern="[0-9]" />
+                      <input type="text" class="mfa-login-digit" maxlength="1" data-index="3"
+                        inputmode="numeric" pattern="[0-9]" />
+                      <input type="text" class="mfa-login-digit" maxlength="1" data-index="4"
+                        inputmode="numeric" pattern="[0-9]" />
+                      <input type="text" class="mfa-login-digit" maxlength="1" data-index="5"
+                        inputmode="numeric" pattern="[0-9]" />
+                    </div>
+                    <input type="hidden" name="${it.formParamTotpCode}" id="mfa-login-code-hidden" />
                   </div>
-                  <input type="hidden" name="${it.formParamTotpCode}" id="mfa-login-code-hidden" />
+
+                  <button type="submit" class="jenkins-button jenkins-button--primary"
+                    style="width: 100%;">${%submit.button}</button>
+                </form>
+
+                <div class="mfa-login-footer">
+                  <p>${%lost.device}</p>
                 </div>
-
-                <button type="submit" class="mfa-login-btn-primary">${%submit.button}</button>
-              </form>
-
-              <div class="mfa-login-footer">
-                <p>${%lost.device}</p>
               </div>
             </div>
           </div>
@@ -72,11 +64,14 @@
         </j:when>
         <j:otherwise>
           <div class="mfa-login-container">
-            <div class="mfa-login-no-pending">
-              <h2>${%no.pending.auth}</h2>
-              <p>
-                <j:out value="${%please.login(rootURL)}" escapeText="false" />
-              </p>
+            <div class="jenkins-card jenkins-!-margin-bottom-4"
+              style="max-width: 400px; width: 100%; text-align: center;">
+              <div class="jenkins-card__content">
+                <h2 class="jenkins-!-margin-bottom-4">${%no.pending.auth}</h2>
+                <p>
+                  <j:out value="${%please.login(rootURL)}" escapeText="false" />
+                </p>
+              </div>
             </div>
           </div>
         </j:otherwise>

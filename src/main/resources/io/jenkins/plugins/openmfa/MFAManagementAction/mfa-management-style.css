@@ -1,6 +1,11 @@
+/**
+ * MFA Management - Design Library overrides.
+ * Uses jenkins-table, jenkins-card, jenkins-button, jenkins-banner.
+ * Only MFA-specific: modal, status badges, layout.
+ */
+
 .mfa-mgmt-container {
   max-width: 960px;
-  font-family: var(--mfa-font-family);
 }
 
 .mfa-mgmt-header {
@@ -9,40 +14,9 @@
   gap: 16px;
   margin-bottom: 32px;
   padding-bottom: 20px;
-  border-bottom: 2px solid var(--mfa-primary);
+  border-bottom: 2px solid var(--emphasis-color, #0b5394);
 }
 
-.mfa-mgmt-icon-wrapper {
-  width: 48px;
-  height: 48px;
-  background: var(--mfa-primary-gradient);
-  border-radius: var(--mfa-radius-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.mfa-mgmt-icon {
-  width: 24px;
-  height: 24px;
-  color: var(--mfa-bg-white);
-}
-
-.mfa-mgmt-header-text h1 {
-  margin: 0 0 4px 0;
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--mfa-text-primary);
-}
-
-.mfa-mgmt-subtitle {
-  margin: 0;
-  color: var(--mfa-text-light);
-  font-size: 0.95rem;
-}
-
-/* Stats cards */
 .mfa-mgmt-stats {
   display: flex;
   gap: 16px;
@@ -51,114 +25,41 @@
 }
 
 .mfa-mgmt-stat-card {
-  background: var(--mfa-bg-white);
-  border: 1px solid var(--mfa-border-light);
-  border-radius: var(--mfa-radius-lg);
-  padding: 20px 24px;
   flex: 1;
   min-width: 150px;
-  box-shadow: var(--mfa-shadow-subtle);
-  transition: box-shadow var(--mfa-transition-normal);
-}
-
-.mfa-mgmt-stat-card:hover {
-  box-shadow: var(--mfa-shadow-medium);
 }
 
 .mfa-mgmt-stat-value {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--mfa-text-primary);
   line-height: 1;
   margin-bottom: 8px;
 }
 
 .mfa-mgmt-stat-label {
   font-size: 0.875rem;
-  color: var(--mfa-text-light);
+  color: var(--text-color-secondary, #6b7280);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .mfa-mgmt-stat-enabled .mfa-mgmt-stat-value {
-  color: var(--mfa-success);
+  color: var(--success-color, #28a745);
 }
 
 .mfa-mgmt-stat-disabled .mfa-mgmt-stat-value {
-  color: var(--mfa-secondary);
+  color: var(--text-color-secondary);
 }
 
-/* Main card */
-.mfa-mgmt-card {
-  background: var(--mfa-bg-white);
-  border: 1px solid var(--mfa-border-light);
-  border-radius: var(--mfa-radius-lg);
-  box-shadow: var(--mfa-shadow-subtle);
-  overflow: hidden;
-}
-
-.mfa-mgmt-card-header {
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--mfa-border-divider);
-  background: var(--mfa-bg-subtle);
-}
-
-.mfa-mgmt-card-header h2 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--mfa-text-primary);
-}
-
-/* Table styles */
 .mfa-mgmt-table-wrapper {
   overflow-x: auto;
 }
 
-.mfa-mgmt-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.mfa-mgmt-table thead {
-  background: var(--mfa-bg-muted);
-}
-
-.mfa-mgmt-table th {
-  padding: 12px 16px;
-  text-align: left;
-  font-weight: 600;
-  color: var(--mfa-text-secondary);
-  border-bottom: 1px solid var(--mfa-border-light);
-  white-space: nowrap;
-}
-
-.mfa-mgmt-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--mfa-border-divider);
-  color: var(--mfa-text-primary);
-}
-
-.mfa-mgmt-table tbody tr:hover {
-  background: var(--mfa-bg-subtle);
-}
-
-.mfa-mgmt-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
 .mfa-mgmt-user-cell a {
-  color: var(--mfa-primary);
-  text-decoration: none;
   font-weight: 500;
 }
 
-.mfa-mgmt-user-cell a:hover {
-  text-decoration: underline;
-}
-
-/* Status badges */
+/* Status badges - Design Library aligned */
 .mfa-mgmt-status {
   display: inline-block;
   padding: 4px 12px;
@@ -169,52 +70,11 @@
   letter-spacing: 0.3px;
 }
 
-.mfa-status-enabled {
-  background: var(--mfa-success-bg);
-  color: var(--mfa-success);
-}
-
-.mfa-status-configured {
-  background: var(--mfa-warning-bg);
-  color: var(--mfa-warning-heading);
-}
-
-.mfa-status-disabled {
-  background: var(--mfa-bg-muted);
-  color: var(--mfa-text-light);
-}
-
-/* Actions */
 .mfa-mgmt-actions-cell {
   white-space: nowrap;
 }
 
-.mfa-mgmt-reset-form {
-  display: inline-block;
-  margin: 0;
-}
-
-.mfa-mgmt-reset-form .mfa-mgmt-btn-reset {
-  background: var(--mfa-danger-gradient);
-  color: var(--mfa-bg-white);
-  border: none;
-  padding: 6px 16px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  border-radius: var(--mfa-radius-md);
-  cursor: pointer;
-  transition: transform var(--mfa-transition-fast), box-shadow var(--mfa-transition-fast);
-}
-
-.mfa-mgmt-reset-form .mfa-mgmt-btn-reset:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--mfa-danger-shadow);
-}
-
-.mfa-mgmt-reset-form .mfa-mgmt-btn-reset:active {
-  transform: translateY(0);
-}
-
+.mfa-mgmt-reset-form,
 .mfa-mgmt-set-form {
   display: inline-block;
   margin: 0;
@@ -224,77 +84,12 @@
   display: none;
 }
 
-.mfa-mgmt-set-form .mfa-mgmt-btn-reset {
-  background: var(--mfa-primary-gradient);
-  color: var(--mfa-bg-white);
-  border: none;
-  padding: 6px 16px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  border-radius: var(--mfa-radius-md);
-  cursor: pointer;
-  transition: transform var(--mfa-transition-fast), box-shadow var(--mfa-transition-fast);
-}
-
-.mfa-mgmt-set-form .mfa-mgmt-btn-reset:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--mfa-primary-shadow);
-}
-
-.mfa-mgmt-set-form .mfa-mgmt-btn-reset:active {
-  transform: translateY(0);
-}
-
-.mfa-mgmt-no-action {
-  color: var(--mfa-text-light);
-  font-style: italic;
-  font-size: 0.85rem;
-}
-
-/* Empty state */
 .mfa-mgmt-empty {
   padding: 48px 24px;
   text-align: center;
 }
 
-.mfa-mgmt-empty p {
-  margin: 0;
-  color: var(--mfa-text-light);
-  font-size: 0.95rem;
-}
-
-/* Notes section */
-.mfa-mgmt-notes {
-  background: var(--mfa-warning-bg);
-  border: 1px solid var(--mfa-warning-border);
-  border-radius: var(--mfa-radius-lg);
-  padding: 20px 24px;
-  margin-top: 24px;
-}
-
-.mfa-mgmt-notes h3 {
-  margin: 0 0 12px 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--mfa-warning-heading);
-}
-
-.mfa-mgmt-notes ul {
-  margin: 0;
-  padding-left: 20px;
-  color: var(--mfa-warning-text);
-}
-
-.mfa-mgmt-notes li {
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-.mfa-mgmt-notes li:last-child {
-  margin-bottom: 0;
-}
-
-/* Confirm dialog (modal) */
+/* Confirm dialog - Design Library Dialogs use JS API, keep minimal modal */
 .mfa-mgmt-modal {
   position: fixed;
   inset: 0;
@@ -305,7 +100,7 @@
   padding: 24px;
   visibility: hidden;
   opacity: 0;
-  transition: visibility var(--mfa-transition-normal), opacity var(--mfa-transition-normal);
+  transition: visibility 0.2s, opacity 0.2s;
 }
 
 .mfa-mgmt-modal[aria-hidden="false"] {
@@ -322,50 +117,36 @@
 
 .mfa-mgmt-modal-dialog {
   position: relative;
-  background: var(--mfa-bg-white);
-  border-radius: var(--mfa-radius-lg);
-  box-shadow: var(--mfa-shadow-large);
+  background: var(--dialog-background, #fff);
+  border-radius: 8px;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.08);
   padding: 28px 32px;
   max-width: 420px;
   width: 100%;
-  border: 1px solid var(--mfa-border-light);
-  animation: mfa-mgmt-modal-in 0.25s ease-out;
-}
-
-@keyframes mfa-mgmt-modal-in {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  border: 1px solid var(--table-border-color, #e0e0e0);
 }
 
 .mfa-mgmt-modal-icon {
   font-size: 32px;
   line-height: 1;
   margin-bottom: 12px;
-  color: var(--mfa-warning-heading);
 }
 
 .mfa-mgmt-modal-title {
   margin: 0 0 12px 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--mfa-text-primary);
 }
 
 .mfa-mgmt-modal-message {
   margin: 0 0 24px 0;
   font-size: 0.95rem;
   line-height: 1.5;
-  color: var(--mfa-text-secondary);
+  color: var(--text-color-secondary, #6b7280);
 }
 
 .mfa-mgmt-modal-message strong {
-  color: var(--mfa-text-primary);
+  color: var(--text-color, inherit);
   font-weight: 600;
 }
 
@@ -374,123 +155,4 @@
   gap: 12px;
   justify-content: flex-end;
   flex-wrap: wrap;
-}
-
-.mfa-mgmt-modal-btn-cancel {
-  background: var(--mfa-bg-light);
-  color: var(--mfa-text-secondary);
-  border: 1px solid var(--mfa-border-medium);
-  padding: 8px 18px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  border-radius: var(--mfa-radius-md);
-  cursor: pointer;
-  transition: background var(--mfa-transition-fast), color var(--mfa-transition-fast);
-}
-
-.mfa-mgmt-modal-btn-cancel:hover {
-  background: var(--mfa-bg-muted);
-  color: var(--mfa-text-primary);
-}
-
-.mfa-mgmt-modal-btn-confirm {
-  background: var(--mfa-danger-gradient);
-  color: var(--mfa-bg-white);
-  border: none;
-  padding: 8px 18px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: var(--mfa-radius-md);
-  cursor: pointer;
-  box-shadow: 0 2px 8px var(--mfa-danger-shadow);
-  transition: transform var(--mfa-transition-fast), box-shadow var(--mfa-transition-fast);
-}
-
-.mfa-mgmt-modal-btn-confirm:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--mfa-danger-shadow);
-}
-
-.mfa-mgmt-modal-btn-confirm:active {
-  transform: translateY(0);
-}
-
-/* Toast notification */
-.mfa-toast {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: var(--mfa-success);
-  color: var(--mfa-bg-white);
-  padding: 16px 24px;
-  border-radius: var(--mfa-radius-md);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 9999;
-  animation: mfa-mgmt-toast-slide-in 0.4s ease-out;
-}
-
-.mfa-toast.mfa-toast-hiding {
-  animation: mfa-mgmt-toast-slide-out 0.3s ease-in forwards;
-}
-
-.mfa-toast-icon {
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-.mfa-toast-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.mfa-toast-title {
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.mfa-toast-message {
-  font-size: 0.875rem;
-  opacity: 0.9;
-}
-
-.mfa-toast-close {
-  background: transparent;
-  border: none;
-  color: var(--mfa-bg-white);
-  font-size: 20px;
-  cursor: pointer;
-  padding: 4px 8px;
-  margin-left: 8px;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-}
-
-.mfa-toast-close:hover {
-  opacity: 1;
-}
-
-@keyframes mfa-mgmt-toast-slide-in {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes mfa-mgmt-toast-slide-out {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
 }

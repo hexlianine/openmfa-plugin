@@ -1,14 +1,14 @@
 /**
  * MFA Login Script
- * Handles TOTP code input, toast notifications, and lockout countdown.
+ * Handles TOTP code input, notificationBar feedback, and lockout countdown.
  */
 (function () {
   "use strict";
 
   var digits = document.querySelectorAll(".mfa-login-digit");
   var hidden = document.getElementById("mfa-login-code-hidden");
-  var form = document.querySelector(".mfa-login-card form");
-  var submitBtn = document.querySelector(".mfa-login-btn-primary");
+  var form = document.querySelector(".mfa-login-container form");
+  var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
 
   /**
    * Updates the hidden input with the combined digit values.
@@ -68,37 +68,6 @@
   }
 
   /**
-   * Shows a toast notification.
-   * @param {string} toastId - The ID of the toast element
-   * @param {number} duration - Duration in ms before hiding (0 for persistent)
-   */
-  function showToast(toastId, duration) {
-    var toast = document.getElementById(toastId);
-    if (!toast) return;
-
-    toast.classList.remove("mfa-toast-hidden");
-    toast.classList.add("mfa-toast-visible");
-
-    if (duration > 0) {
-      setTimeout(function () {
-        hideToast(toastId);
-      }, duration);
-    }
-  }
-
-  /**
-   * Hides a toast notification.
-   * @param {string} toastId - The ID of the toast element
-   */
-  function hideToast(toastId) {
-    var toast = document.getElementById(toastId);
-    if (!toast) return;
-
-    toast.classList.remove("mfa-toast-visible");
-    toast.classList.add("mfa-toast-hidden");
-  }
-
-  /**
    * Formats seconds into a human-readable string (MM:SS or just seconds).
    * @param {number} seconds - The number of seconds
    * @returns {string} Formatted time string
@@ -122,7 +91,6 @@
     });
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.classList.add("mfa-login-btn-disabled");
     }
   }
 
@@ -136,7 +104,6 @@
     });
     if (submitBtn) {
       submitBtn.disabled = false;
-      submitBtn.classList.remove("mfa-login-btn-disabled");
     }
     if (digits[0]) {
       digits[0].focus();
@@ -192,8 +159,10 @@
     var urlParams = new URLSearchParams(window.location.search);
     var error = urlParams.get("error");
 
-    if (error === "invalid") {
-      showToast("mfa-toast", 4000);
+    if (error === "invalid" && typeof notificationBar !== "undefined") {
+      var msgEl = document.getElementById("mfa-invalid-code-msg");
+      var msg = msgEl ? msgEl.textContent : "Invalid verification code.";
+      notificationBar.show(msg, notificationBar.ERROR);
     } else if (error === "locked") {
       var remaining = parseInt(urlParams.get("remaining"), 10);
       if (!isNaN(remaining) && remaining > 0) {

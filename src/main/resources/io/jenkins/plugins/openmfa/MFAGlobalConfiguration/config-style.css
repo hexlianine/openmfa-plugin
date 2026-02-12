@@ -1,9 +1,0 @@
-/**
- * MFAGlobalConfiguration config styles (standalone)
- */
-
-.mfa-status-label {
-  font-weight: 500;
-  color: var(--mfa-text-secondary, #4a4a5a);
-  font-size: 14px;
-}

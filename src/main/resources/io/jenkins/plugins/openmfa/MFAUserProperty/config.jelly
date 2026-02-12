@@ -1,13 +1,12 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
-  <st:adjunct includes="io.jenkins.plugins.openmfa.mfa-variables" />
   <st:adjunct includes="io.jenkins.plugins.openmfa.MFAUserProperty.config-style" />
 
   <f:section>
     <f:entry>
-      <div class="mfa-config-card">
-        <!-- Status Badge -->
-        <div class="mfa-status-row">
+      <div class="jenkins-card mfa-config-card">
+        <div class="jenkins-card__content">
+          <div class="mfa-status-row">
           <span class="mfa-status-label mfa-inline-flex">
             ${%config.status.title}
             <!-- Setup page link -->
@@ -54,6 +53,7 @@
               </span>
             </j:otherwise>
           </j:choose>
+          </div>
         </div>
       </div>
     </f:entry>

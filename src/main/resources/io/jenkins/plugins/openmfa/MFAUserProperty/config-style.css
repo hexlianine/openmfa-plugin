@@ -1,12 +1,9 @@
 /**
- * MFA User Property Configuration Styles
+ * MFA User Property - Design Library overrides.
+ * Uses jenkins-card. Minimal overrides for status badge layout.
  */
 
 .mfa-config-card {
-  background: var(--mfa-bg-white, #fff);
-  border: 1px solid var(--mfa-border-light, #e0e0e0);
-  border-radius: var(--mfa-radius-lg, 12px);
-  padding: 20px;
   max-width: 500px;
 }
 
@@ -15,13 +12,12 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: 16px;
-  border-bottom: 1px solid var(--mfa-border-divider, #f3f4f6);
+  border-bottom: 1px solid var(--table-border-color, #e0e0e0);
   margin-bottom: 16px;
 }
 
 .mfa-status-label {
   font-weight: 500;
-  color: var(--mfa-text-secondary, #4a4a5a);
   font-size: 14px;
 }
 
@@ -36,23 +32,19 @@
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
-  border-radius: var(--mfa-radius-lg, 50px);
+  border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
 }
 
 .mfa-status-enabled {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-  color: #065f46;
+  background: var(--alert-success-bg-color, #d1fae5);
+  color: var(--alert-success-text-color, #065f46);
 }
 
 .mfa-status-disabled {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  color: #92400e;
-}
-
-.mfa-action-row {
-  padding-top: 4px;
+  background: var(--alert-warning-bg-color, #fef3c7);
+  color: var(--alert-warning-text-color, #92400e);
 }
 
 .mfa-setup-link {
@@ -60,11 +52,4 @@
   align-items: center;
   gap: 6px;
   font-size: 14px;
-  color: var(--mfa-link-color, #1a73e8);
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.mfa-setup-link:hover {
-  text-decoration: underline;
 }

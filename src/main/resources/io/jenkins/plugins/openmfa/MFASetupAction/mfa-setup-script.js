@@ -1,3 +1,13 @@
+function initNotification() {
+  var el = document.getElementById('mfa-notification-data');
+  if (!el || typeof notificationBar === 'undefined') return;
+  var msg = el.getAttribute('data-msg');
+  var type = el.getAttribute('data-type');
+  if (!msg) return;
+  var barType = type === 'error' ? notificationBar.ERROR : notificationBar.SUCCESS;
+  notificationBar.show(msg, barType);
+}
+
 function copySecret(button) {
     const input = button.previousElementSibling;
     const secret = input.value;
@@ -17,52 +27,6 @@ function copySecret(button) {
     } else {
       fallbackCopy(secret, button);
     }
-  }
-
-  function dismissToast(button) {
-    var toast = button.closest('.mfa-toast');
-    if (toast) {
-      toast.classList.add('mfa-toast-hiding');
-      setTimeout(function() {
-        toast.remove();
-        // Clean up URL parameter
-        if (window.history && window.history.replaceState) {
-          var url = new URL(window.location.href);
-          url.searchParams.delete('success');
-          window.history.replaceState({}, document.title, url.pathname);
-        }
-      }, 300);
-    }
-  }
-
-  function initToast() {
-    // Attach click handlers to all toast close buttons
-    var closeButtons = document.querySelectorAll('.mfa-toast-close');
-    for (var i = 0; i < closeButtons.length; i++) {
-      (function(button) {
-        button.addEventListener('click', function() {
-          dismissToast(button);
-        });
-      })(closeButtons[i]);
-    }
-
-    // Auto-dismiss the first toast after 5 seconds, if present
-    setTimeout(function() {
-      var toast = document.querySelector('.mfa-toast');
-      if (toast && document.body.contains(toast)) {
-        var closeButton = toast.querySelector('.mfa-toast-close');
-        if (closeButton) {
-          dismissToast(closeButton);
-        }
-      }
-    }, 5000);
-  }
-
-  // Initialize toast on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initToast);
-  } else {
-    initToast();
   }
 
   function fallbackCopy(text, button) {
@@ -85,4 +49,10 @@ function copySecret(button) {
       console.error('Failed to copy:', err);
     }
     document.body.removeChild(textArea);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNotification);
+  } else {
+    initNotification();
   }

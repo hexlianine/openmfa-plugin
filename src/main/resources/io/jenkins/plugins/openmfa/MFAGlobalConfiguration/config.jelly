@@ -1,8 +1,5 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
-  <st:adjunct includes="io.jenkins.plugins.openmfa.mfa-variables" />
-  <st:adjunct includes="io.jenkins.plugins.openmfa.MFAGlobalConfiguration.config-style" />
-
   <f:section title="${%config.section.title}">
     <f:entry title="${%config.issuer.title}" field="issuer">
       <f:textbox default="${instance.defaultIssuer}" />

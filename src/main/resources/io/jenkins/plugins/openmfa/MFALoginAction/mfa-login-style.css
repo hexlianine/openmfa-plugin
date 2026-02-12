@@ -1,56 +1,22 @@
+/**
+ * MFA Login - Design Library overrides.
+ * Uses Jenkins Design Library (jenkins-button, jenkins-card, jenkins-banner).
+ * Only MFA-specific layout: 6-digit OTP input, lockout banner.
+ */
+
+/* Centered layout */
 .mfa-login-container {
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: 40px 20px;
-  font-family: var(--mfa-font-family);
-}
-
-.mfa-login-card {
-  background: var(--mfa-bg-white);
-  border-radius: var(--mfa-radius-xl);
-  padding: 48px 40px;
-  max-width: 400px;
-  width: 100%;
-  box-shadow: var(--mfa-shadow-large);
-  text-align: center;
-}
-
-.mfa-login-icon-wrapper {
-  width: 56px;
-  height: 56px;
-  background: var(--mfa-bg-muted);
-  border-radius: var(--mfa-radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 24px;
-}
-
-.mfa-login-icon {
-  width: 28px;
-  height: 28px;
-  color: var(--mfa-text-light);
-}
-
-.mfa-login-title {
-  margin: 0 0 8px 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--mfa-text-dark);
-}
-
-.mfa-login-prompt {
-  margin: 0 0 32px 0;
-  color: var(--mfa-text-light);
-  font-size: 0.95rem;
-  line-height: 1.5;
 }
 
 .mfa-login-code-wrapper {
   margin-bottom: 24px;
 }
 
+/* 6-digit OTP input - no Design Library equivalent */
 .mfa-login-code-boxes {
   display: flex;
   justify-content: center;
@@ -60,136 +26,52 @@
 .mfa-login-digit {
   width: 48px;
   height: 56px;
-  border: 2px solid var(--mfa-border-subtle);
-  border-radius: var(--mfa-radius-lg);
+  border: 2px solid var(--input-border, #d0d0d0);
+  border-radius: 6px;
   font-size: 1.5rem;
   font-weight: 600;
   text-align: center;
-  color: var(--mfa-text-dark);
-  background: var(--mfa-bg-white);
-  transition: border-color var(--mfa-transition-normal), box-shadow var(--mfa-transition-normal);
+  background: var(--input-background, #fff);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .mfa-login-digit:focus {
   outline: none;
-  border-color: var(--mfa-primary);
-  box-shadow: 0 0 0 3px var(--mfa-primary-shadow-light);
+  border-color: var(--focus-input-border, #0b5394);
+  box-shadow: 0 0 0 3px var(--focus-input-glow, rgba(11, 83, 148, 0.2));
 }
 
 .mfa-login-digit::placeholder {
-  color: #d1d5db;
+  color: var(--text-color-secondary, #6b7280);
 }
 
-.mfa-login-btn-primary {
-  background: var(--mfa-primary-gradient);
-  color: var(--mfa-bg-white);
-  border: none;
-  padding: 16px 32px;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: var(--mfa-radius-lg);
-  cursor: pointer;
-  width: 100%;
-  transition: background var(--mfa-transition-normal), transform var(--mfa-transition-fast), box-shadow var(--mfa-transition-fast);
-}
-
-.mfa-login-btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--mfa-primary-shadow);
-}
-
-.mfa-login-btn-primary:active {
-  transform: translateY(0);
+.mfa-login-digit-disabled {
+  opacity: 0.6;
+  cursor: not-allowed !important;
 }
 
 .mfa-login-footer {
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid var(--mfa-border-divider);
+  border-top: 1px solid var(--table-border-color, #e0e0e0);
 }
 
 .mfa-login-footer p {
   margin: 0;
-  color: var(--mfa-text-light);
   font-size: 0.875rem;
-  line-height: 1.5;
+  color: var(--text-color-secondary, #6b7280);
 }
 
-.mfa-login-no-pending {
-  background: var(--mfa-bg-white);
-  border-radius: var(--mfa-radius-xl);
-  padding: 48px 40px;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  box-shadow: var(--mfa-shadow-large);
-}
-
-.mfa-login-no-pending h2 {
-  margin: 0 0 12px 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--mfa-text-dark);
-}
-
-.mfa-login-no-pending p {
-  margin: 0;
-  color: var(--mfa-text-light);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.mfa-login-no-pending a {
-  color: var(--mfa-primary);
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.mfa-login-no-pending a:hover {
-  text-decoration: underline;
-}
-
-/* Toast notification */
-.mfa-toast {
-  position: fixed;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-100px);
-  background: var(--mfa-danger);
-  color: var(--mfa-bg-white);
-  padding: 14px 24px;
-  border-radius: var(--mfa-radius-lg);
-  box-shadow: 0 4px 16px var(--mfa-danger-shadow);
-  font-size: 0.95rem;
-  font-weight: 500;
-  z-index: 9999;
-  opacity: 0;
-  transition: transform var(--mfa-transition-normal), opacity var(--mfa-transition-normal);
-}
-
-.mfa-toast-visible {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
-}
-
-.mfa-toast-hidden {
-  transform: translateX(-50%) translateY(-100px);
-  opacity: 0;
-}
-
-/* Lockout banner */
+/* Lockout banner - jenkins-banner + fixed positioning */
 .mfa-lockout-banner {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  background: var(--mfa-warning-bg);
-  border-bottom: 2px solid var(--mfa-warning-border);
-  padding: 16px 24px;
   z-index: 9998;
   transform: translateY(-100%);
   opacity: 0;
-  transition: transform var(--mfa-transition-normal), opacity var(--mfa-transition-normal);
+  transition: transform 0.2s, opacity 0.2s;
 }
 
 .mfa-lockout-visible {
@@ -211,53 +93,14 @@
   margin: 0 auto;
 }
 
-.mfa-lockout-icon {
-  width: 24px;
-  height: 24px;
-  color: var(--mfa-warning-heading);
-  flex-shrink: 0;
-}
-
 .mfa-lockout-text {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.mfa-lockout-title {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--mfa-warning-heading);
-}
-
-.mfa-lockout-message {
-  font-size: 0.875rem;
-  color: var(--mfa-warning-text);
-}
-
 .mfa-lockout-countdown {
   font-weight: 700;
-  font-family: var(--mfa-font-mono);
+  font-family: monospace;
   margin-left: 4px;
-}
-
-/* Disabled state for inputs */
-.mfa-login-digit-disabled {
-  background: var(--mfa-bg-muted) !important;
-  color: var(--mfa-text-light) !important;
-  cursor: not-allowed !important;
-  border-color: var(--mfa-border-light) !important;
-}
-
-.mfa-login-digit-disabled:focus {
-  border-color: var(--mfa-border-light) !important;
-  box-shadow: none !important;
-}
-
-/* Disabled state for button */
-.mfa-login-btn-disabled {
-  background: var(--mfa-secondary) !important;
-  cursor: not-allowed !important;
-  transform: none !important;
-  box-shadow: none !important;
 }

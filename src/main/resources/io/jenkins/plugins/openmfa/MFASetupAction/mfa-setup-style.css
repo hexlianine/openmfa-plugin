@@ -1,189 +1,41 @@
+/**
+ * MFA Setup - Design Library overrides.
+ * Uses jenkins-card, jenkins-button, jenkins-banner.
+ * Only MFA-specific: QR wrapper, secret code input, OTP input.
+ */
+
 .mfa-container {
   max-width: 860px;
-  font-family: var(--mfa-font-family);
-}
-
-.mfa-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--mfa-primary);
-}
-
-.mfa-header h1 {
-  margin: 0;
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: var(--mfa-text-primary);
-}
-
-.mfa-shield-icon {
-  width: 40px;
-  height: 40px;
-  background: var(--mfa-primary-gradient);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--mfa-bg-white);
-  font-size: 20px;
-}
-
-.mfa-alert {
-  padding: 16px 20px;
-  border-radius: var(--mfa-radius-md);
-  margin-bottom: 24px;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.mfa-alert-success {
-  background: var(--mfa-success-bg);
-}
-
-.mfa-alert-info {
-  background: var(--mfa-info-bg);
-}
-
-.mfa-alert-icon {
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-.mfa-alert-content strong {
-  display: block;
-  font-size: 1rem;
-  margin-bottom: 4px;
-  color: var(--mfa-text-primary);
-}
-
-.mfa-alert-content p {
-  margin: 0;
-  color: var(--mfa-text-secondary);
-  font-size: 0.9rem;
-}
-
-.mfa-card {
-  background: var(--mfa-bg-white);
-  border: 1px solid var(--mfa-border-light);
-  border-radius: var(--mfa-radius-lg);
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: var(--mfa-shadow-subtle);
-  transition: box-shadow var(--mfa-transition-normal);
-}
-
-.mfa-card:hover {
-  box-shadow: var(--mfa-shadow-medium);
-}
-
-.mfa-step-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.mfa-step-number {
-  width: 32px;
-  height: 32px;
-  background: var(--mfa-primary-gradient);
-  color: var(--mfa-bg-white);
-  border-radius: var(--mfa-radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.mfa-step-header h2 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--mfa-text-primary);
-}
-
-.mfa-card p {
-  margin: 0 0 16px 0;
-  color: var(--mfa-text-muted);
-  line-height: 1.5;
 }
 
 .mfa-qr-wrapper {
   display: inline-block;
   padding: 16px;
-  background: var(--mfa-bg-subtle);
-  border: 2px dashed var(--mfa-border-medium);
-  border-radius: var(--mfa-radius-lg);
+  background: var(--light-grey, #f5f5f5);
+  border: 2px dashed var(--table-border-color, #d0d0d0);
+  border-radius: 8px;
 }
 
 .mfa-qr-wrapper img {
   display: block;
-  border-radius: var(--mfa-radius-sm);
+  border-radius: 4px;
 }
 
-.mfa-secret-code {
-  font-family: var(--mfa-font-mono);
-  font-size: 1rem;
-  background: var(--mfa-bg-gradient);
-  padding: 14px 18px;
-  border-radius: var(--mfa-radius-md);
-  border: 1px solid var(--mfa-border-input);
-  letter-spacing: 2px;
-  word-break: break-all;
-  color: var(--mfa-text-code);
-}
-
-.mfa-secret-input-wrapper {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 12px;
-}
-
-.mfa-secret-input {
-  font-family: var(--mfa-font-mono);
-  font-size: 0.95rem;
-  background: var(--mfa-bg-light);
+.mfa-code-input {
+  font-family: monospace;
+  font-size: 1.5rem;
+  text-align: center;
+  letter-spacing: 8px;
   padding: 12px 16px;
-  border: 1px solid var(--mfa-border-input);
-  border-radius: var(--mfa-radius-md);
-  flex: 1;
-  color: var(--mfa-text-code);
-  letter-spacing: 1px;
-  cursor: text;
+  border: 2px solid var(--input-border, #d0d0d0);
+  border-radius: 8px;
+  width: 180px;
 }
 
-.mfa-secret-input:focus {
+.mfa-code-input:focus {
   outline: none;
-  border-color: var(--mfa-primary);
-  box-shadow: 0 0 0 3px var(--mfa-primary-shadow-subtle);
-}
-
-.mfa-copy-btn {
-  background: var(--mfa-secondary-gradient);
-  color: var(--mfa-bg-white);
-  border: none;
-  padding: 12px 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: var(--mfa-radius-md);
-  cursor: pointer;
-  transition: transform var(--mfa-transition-fast), box-shadow var(--mfa-transition-fast), background var(--mfa-transition-fast);
-  white-space: nowrap;
-}
-
-.mfa-copy-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--mfa-secondary-shadow);
-}
-
-.mfa-copy-btn.copied {
-  background: var(--mfa-success-gradient);
+  border-color: var(--focus-input-border, #0b5394);
+  box-shadow: 0 0 0 3px rgba(11, 83, 148, 0.2);
 }
 
 .mfa-form-group {
@@ -195,181 +47,11 @@
 
 .mfa-form-group label {
   font-weight: 500;
-  color: var(--mfa-text-secondary);
   min-width: 120px;
-}
-
-.mfa-code-input {
-  font-family: var(--mfa-font-mono);
-  font-size: 1.5rem;
-  text-align: center;
-  letter-spacing: 8px;
-  padding: 12px 16px;
-  border: 2px solid var(--mfa-border-medium);
-  border-radius: var(--mfa-radius-md);
-  width: 180px;
-  transition: border-color var(--mfa-transition-normal), box-shadow var(--mfa-transition-normal);
-}
-
-.mfa-code-input:focus {
-  outline: none;
-  border-color: var(--mfa-primary);
-  box-shadow: 0 0 0 3px var(--mfa-primary-shadow-light);
-}
-
-.mfa-btn-primary {
-  background: var(--mfa-primary-gradient);
-  color: var(--mfa-bg-white);
-  border: none;
-  padding: 12px 28px;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: var(--mfa-radius-md);
-  cursor: pointer;
-  transition: transform var(--mfa-transition-fast), box-shadow var(--mfa-transition-fast);
-}
-
-.mfa-btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--mfa-primary-shadow);
-}
-
-.mfa-btn-danger {
-  background: var(--mfa-danger-gradient);
-  color: var(--mfa-bg-white);
-  border: none;
-  padding: 10px 24px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: var(--mfa-radius-md);
-  cursor: pointer;
-  transition: transform var(--mfa-transition-fast), box-shadow var(--mfa-transition-fast);
-}
-
-.mfa-btn-danger:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--mfa-danger-shadow);
 }
 
 .mfa-actions {
   display: flex;
   gap: 12px;
   margin-top: 24px;
-}
-
-.mfa-notes {
-  background: var(--mfa-warning-bg);
-  border: 1px solid var(--mfa-warning-border);
-  border-radius: var(--mfa-radius-lg);
-  padding: 20px 24px;
-  margin-top: 32px;
-}
-
-.mfa-notes h3 {
-  margin: 0 0 12px 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--mfa-warning-heading);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.mfa-notes ul {
-  margin: 0;
-  padding-left: 20px;
-  color: var(--mfa-warning-text);
-}
-
-.mfa-notes li {
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-.mfa-notes li:last-child {
-  margin-bottom: 0;
-}
-
-/* Success Toast Notification */
-.mfa-toast {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: var(--mfa-success-gradient);
-  color: var(--mfa-bg-white);
-  padding: 16px 24px;
-  border-radius: var(--mfa-radius-md);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 9999;
-  animation: mfa-toast-slide-in 0.4s ease-out;
-}
-
-.mfa-toast.mfa-toast-error {
-  background: var(--mfa-danger-gradient);
-}
-
-.mfa-toast.mfa-toast-hiding {
-  animation: mfa-toast-slide-out 0.3s ease-in forwards;
-}
-
-.mfa-toast-icon {
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-.mfa-toast-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.mfa-toast-title {
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.mfa-toast-message {
-  font-size: 0.875rem;
-  opacity: 0.9;
-}
-
-.mfa-toast-close {
-  background: transparent;
-  border: none;
-  color: var(--mfa-bg-white);
-  font-size: 20px;
-  cursor: pointer;
-  padding: 4px 8px;
-  margin-left: 8px;
-  opacity: 0.7;
-  transition: opacity var(--mfa-transition-fast);
-}
-
-.mfa-toast-close:hover {
-  opacity: 1;
-}
-
-@keyframes mfa-toast-slide-in {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes mfa-toast-slide-out {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
 }
