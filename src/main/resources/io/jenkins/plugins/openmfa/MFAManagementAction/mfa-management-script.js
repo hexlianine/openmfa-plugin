@@ -30,9 +30,9 @@ function showResetConfirm(userId, form) {
   const message =
     (labels ? labels.messagePrefix : "") +
     " " +
-    "👤(<strong>" +
+    "👤(" +
     userId +
-    "</strong>)" +
+    ")" +
     (labels ? labels.messageSuffix : "");
 
   // Fallback if the Design Library dialog API is not available
