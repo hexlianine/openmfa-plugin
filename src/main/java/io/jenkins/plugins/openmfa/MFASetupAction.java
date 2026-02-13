@@ -7,7 +7,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import hudson.model.Action;
+import hudson.model.InvisibleAction;
 import hudson.model.User;
 import hudson.util.Secret;
 import io.jenkins.plugins.openmfa.base.MFAContext;
@@ -32,7 +32,7 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
  * Action that provides MFA setup interface for users.
  */
 @Log
-public class MFASetupAction implements Action {
+public class MFASetupAction extends InvisibleAction {
 
   private final User targetUser;
 
@@ -155,11 +155,6 @@ public class MFASetupAction implements Action {
     return getTargetUser();
   }
 
-  @Override
-  public String getDisplayName() {
-    return UIConstants.DisplayNames.CONFIGURE_MFA;
-  }
-
   /**
    * Get the form parameter name for verification code (for Jelly views).
    */
@@ -172,11 +167,6 @@ public class MFASetupAction implements Action {
    */
   public String getFormParamSecret() {
     return PluginConstants.FormParameters.SECRET;
-  }
-
-  @Override
-  public String getIconFileName() {
-    return null;
   }
 
   /**
