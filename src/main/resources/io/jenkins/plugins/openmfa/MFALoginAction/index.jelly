@@ -4,6 +4,31 @@
     <st:adjunct includes="io.jenkins.plugins.openmfa.MFALoginAction.mfa-login-style" />
     <l:main-panel>
       <j:choose>
+        <j:when test="${it.hasPendingAuth() and it.isSessionMFAVerified()}">
+          <div class="mfa-login-container">
+            <div class="jenkins-card jenkins-!-margin-bottom-4"
+              style="max-width: 400px; width: 100%; text-align: center;">
+              <div class="jenkins-!-padding-6">
+                <div class="jenkins-!-text-center">
+                  <div class="mfa-login-icon jenkins-!-margin-bottom-4">
+                    <l:icon src="symbol-check" class="icon-lg" />
+                  </div>
+                  <h1 class="jenkins-!-margin-bottom-2">${%title}</h1>
+                  <p class="jenkins-!-margin-bottom-2" style="color: var(--text-color-secondary);">
+                    ${%mfa.enabled.info}
+                  </p>
+                  <p class="jenkins-!-margin-bottom-4" style="color: var(--text-color-secondary);">
+                    ${%mfa.already.verified}
+                  </p>
+                  <a href="${rootURL}/"
+                    class="jenkins-button jenkins-button--primary jenkins-!-margin-top-6">
+                    ${%continue.button}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </j:when>
         <j:when test="${it.hasPendingAuth()}">
           <span id="mfa-invalid-code-msg" style="display:none">${%error.invalid.code}</span>
 

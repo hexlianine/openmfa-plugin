@@ -8,6 +8,9 @@ import io.jenkins.plugins.openmfa.base.MFAContext;
 import io.jenkins.plugins.openmfa.constant.PluginConstants;
 import io.jenkins.plugins.openmfa.service.SessionService;
 import io.jenkins.plugins.openmfa.util.JenkinsUtil;
+import io.jenkins.plugins.openmfa.util.TOTPUtil;
+
+import jakarta.servlet.http.HttpSession;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.Stapler;
@@ -81,4 +84,24 @@ public class MFALoginAction extends InvisibleAction implements RootAction {
   public boolean hasPendingAuth() {
     return getPendingUsername() != null;
   }
+
+  /**
+   * Check if the current session has already passed MFA verification.
+   *
+   * @return true if the current session has already passed MFA verification,
+   *         false otherwise
+   */
+  public boolean isSessionMFAVerified() {
+    var req = Stapler.getCurrentRequest2();
+    if (req == null) {
+      return false;
+    }
+
+    HttpSession session = req.getSession(false);
+    return session != null
+      && MFAContext.i()
+        .getService(SessionService.class)
+        .isVerifiedSession(session);
+  }
+
 }
