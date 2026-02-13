@@ -25,13 +25,6 @@ public class UserInfo {
   }
 
   /**
-   * Returns the CSS class to use for the status badge.
-   */
-  public String getStatusClass() {
-    return mfaEnabled ? "mfa-status-enabled" : "mfa-status-disabled";
-  }
-
-  /**
    * Returns a human-readable status string for the MFA state.
    */
   public String getStatusText() {

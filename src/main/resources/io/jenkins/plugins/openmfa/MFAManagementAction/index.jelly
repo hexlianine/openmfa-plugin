@@ -10,7 +10,8 @@
       <j:if test="${request.getParameter('success') == 'reset_mfa'}">
         <span id="mfa-notification-data" data-type="success"
           data-msg="${%reset.toast.theUser} ${request.getParameter('user_id')}${%reset.toast.sSuffix} ${%reset.success}"
-          style="display:none"></span>
+          style="display:none">
+        </span>
       </j:if>
 
       <span id="mfa-reset-dialog-messages"
@@ -27,7 +28,9 @@
           <div>
             <h1 class="jenkins-!-margin-bottom-1">${%title}</h1>
             <p class="jenkins-!-margin-0"
-              style="color: var(--text-color-secondary); font-size: 0.95rem;">${%subtitle}</p>
+              style="color: var(--text-color-secondary); font-size: 0.95rem;">
+              ${%subtitle}
+            </p>
           </div>
         </div>
 
@@ -58,8 +61,10 @@
             <j:set var="users" value="${it.getAllUsers()}" />
             <j:choose>
               <j:when test="${empty(users)}">
-                <div class="mfa-mgmt-empty">
-                  <p>${%no.users}</p>
+                <div class="jenkins-card">
+                  <div class="mfa-mgmt-empty">
+                    <p>${%no.users}</p>
+                  </div>
                 </div>
               </j:when>
               <j:otherwise>
@@ -75,13 +80,19 @@
                     </thead>
                     <tbody>
                       <j:forEach var="user" items="${users}">
+                        <j:set var="statusClass"
+                          value="${user.mfaEnabled ? 'success' : 'warning'}" />
+
                         <tr>
                           <td class="mfa-mgmt-user-cell">
                             <a href="${it.getSetupUri(user.userId)}">${user.userId}</a>
                           </td>
                           <td>${user.fullName}</td>
                           <td>
-                            <span class="mfa-mgmt-status ${user.statusClass}">${user.statusText}</span>
+                            <span
+                              class="mfa-mgmt-status jenkins-alert jenkins-alert-${statusClass} jenkins-!-margin-0">
+                              ${user.statusText}
+                            </span>
                           </td>
                           <td class="mfa-mgmt-actions-cell">
                             <j:if test="${user.mfaEnabled}">
