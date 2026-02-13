@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -113,6 +114,41 @@ public class MFAFilter implements Filter {
   }
 
   /**
+   * Builds the {@code from} query parameter with the originally requested URI
+   * so the user can be redirected there after MFA verification.
+   *
+   * @return the from param as "&from=encoded" for appending to URLs that
+   *         already have query params, or empty string if there is no target
+   */
+  private String buildFromParam(HttpServletRequest req) {
+    String uri = req.getRequestURI();
+    String contextPath = req.getContextPath();
+    String relativePath = uri;
+    if (
+      contextPath != null && !contextPath.isEmpty() && uri.startsWith(contextPath)
+    ) {
+      relativePath = uri.substring(contextPath.length());
+    }
+    if (relativePath.isEmpty()) {
+      relativePath = "/";
+    }
+    String query = req.getQueryString();
+    if (query != null && !query.isEmpty()) {
+      relativePath = relativePath + "?" + query;
+    }
+    try {
+      return "&"
+        + PluginConstants.FROM_PARAM
+        + "="
+        + URLEncoder.encode(
+          relativePath, java.nio.charset.StandardCharsets.UTF_8
+        );
+    } catch (Exception e) {
+      return "";
+    }
+  }
+
+  /**
    * Handles MFA verification for authenticated users.
    *
    * @return true if the request should continue, false if it was
@@ -168,11 +204,14 @@ public class MFAFilter implements Filter {
             "User %s is locked out, %d seconds remaining", username, remainingSeconds
           )
         );
-        resp.sendRedirect(
+        String mfaLoginUrl =
           req.getContextPath()
-            + "/" + PluginConstants.Urls.LOGIN_ACTION_URL
-            + "?error=locked&remaining=" + remainingSeconds
-        );
+            + "/"
+            + PluginConstants.Urls.LOGIN_ACTION_URL
+            + "?error=locked&remaining="
+            + remainingSeconds
+            + buildFromParam(req);
+        resp.sendRedirect(mfaLoginUrl);
         return false;
       }
 
@@ -190,11 +229,13 @@ public class MFAFilter implements Filter {
         rateLimitService.recordFailedAttempt(username);
         log.warning(String.format("Invalid MFA code for user: %s", username));
         // Redirect back to MFA page with error
-        resp.sendRedirect(
+        String mfaLoginUrl =
           req.getContextPath()
-            + "/" + PluginConstants.Urls.LOGIN_ACTION_URL
+            + "/"
+            + PluginConstants.Urls.LOGIN_ACTION_URL
             + "?error=invalid"
-        );
+            + buildFromParam(req);
+        resp.sendRedirect(mfaLoginUrl);
 
         return false;
       }
@@ -212,10 +253,14 @@ public class MFAFilter implements Filter {
     // Store pending authentication state
     session.setAttribute(PluginConstants.SessionAttributes.PENDING_AUTH, username);
 
-    // Redirect to MFA input page (only if response is not already committed)
-    resp.sendRedirect(
-      req.getContextPath() + "/" + PluginConstants.Urls.LOGIN_ACTION_URL
-    );
+    // Redirect to MFA input page, preserving the originally requested URL
+    String fromParam = buildFromParam(req);
+    String mfaLoginUrl =
+      req.getContextPath()
+        + "/"
+        + PluginConstants.Urls.LOGIN_ACTION_URL
+        + (fromParam.isEmpty() ? "" : "?" + fromParam.substring(1));
+    resp.sendRedirect(mfaLoginUrl);
     return false;
   }
 

@@ -8,9 +8,9 @@ import io.jenkins.plugins.openmfa.base.MFAContext;
 import io.jenkins.plugins.openmfa.constant.PluginConstants;
 import io.jenkins.plugins.openmfa.service.SessionService;
 import io.jenkins.plugins.openmfa.util.JenkinsUtil;
-import io.jenkins.plugins.openmfa.util.TOTPUtil;
-
 import jakarta.servlet.http.HttpSession;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.Stapler;
@@ -21,6 +21,27 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
  */
 @Extension
 public class MFALoginAction extends InvisibleAction implements RootAction {
+
+  /**
+   * Validates that the redirect target is safe (no open redirect).
+   * The path must be relative (start with /) and must not be a full URL.
+   */
+  private static boolean isSafeRedirectTarget(String target) {
+    if (target == null || target.isEmpty()) {
+      return false;
+    }
+    // Must start with / and not //
+    if (!target.startsWith("/") || target.startsWith("//")) {
+      return false;
+    }
+    // Must not contain protocol (open redirect). Allow query params like ?foo:bar,
+    // but reject protocol-like prefixes in the path.
+    String beforeQuery = target.split("\\?", 2)[0];
+    if (beforeQuery.contains(":")) {
+      return false;
+    }
+    return true;
+  }
 
   /**
    * Handles TOTP code verification via POST.
@@ -38,9 +59,18 @@ public class MFALoginAction extends InvisibleAction implements RootAction {
 
     MFAUserProperty mfaProperty = MFAUserProperty.forUser(user);
     if (mfaProperty == null || !mfaProperty.verifyCode(totpCode)) {
-      return HttpResponses.redirectViaContextPath(
-        "/" + PluginConstants.Urls.LOGIN_ACTION_URL + "?error=invalid"
-      );
+      String fromParam = req.getParameter(PluginConstants.FROM_PARAM);
+      String redirectUrl =
+        "/"
+          + PluginConstants.Urls.LOGIN_ACTION_URL
+          + "?error=invalid"
+          + (fromParam != null && !fromParam.isEmpty()
+            ? "&"
+              + PluginConstants.FROM_PARAM
+              + "="
+              + URLEncoder.encode(fromParam, StandardCharsets.UTF_8)
+            : "");
+      return HttpResponses.redirectViaContextPath(redirectUrl);
     }
 
     // Mark MFA as verified in session
@@ -48,7 +78,11 @@ public class MFALoginAction extends InvisibleAction implements RootAction {
       .getService(SessionService.class)
       .verifySession(req);
 
-    // Redirect to root
+    // Redirect to original requested page, or root if none
+    String from = req.getParameter(PluginConstants.FROM_PARAM);
+    if (from != null && !from.isEmpty() && isSafeRedirectTarget(from)) {
+      return HttpResponses.redirectViaContextPath(from);
+    }
     return HttpResponses.redirectViaContextPath("/");
   }
 
@@ -60,10 +94,31 @@ public class MFALoginAction extends InvisibleAction implements RootAction {
   }
 
   /**
+   * Returns the post-MFA redirect target from the current request.
+   * Used to preserve the originally requested URL when the form is submitted.
+   */
+  public String getFromParam() {
+    var req = Stapler.getCurrentRequest2();
+    if (req == null) {
+      return null;
+    }
+    return req.getParameter(PluginConstants.FROM_PARAM);
+  }
+
+  /**
    * Gets the username from the current user.
    */
   public String getPendingUsername() {
     return JenkinsUtil.getCurrentUser().map(User::getId).orElse(null);
+  }
+
+  /**
+   * Returns the post-MFA redirect target only if it passes security validation.
+   * Use for links (e.g. "already verified" continue button).
+   */
+  public String getSafeFromParam() {
+    String from = getFromParam();
+    return (from != null && isSafeRedirectTarget(from)) ? from : null;
   }
 
   /**

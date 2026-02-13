@@ -20,10 +20,20 @@
                   <p class="jenkins-!-margin-bottom-4" style="color: var(--text-color-secondary);">
                     ${%mfa.already.verified}
                   </p>
-                  <a href="${rootURL}/"
-                    class="jenkins-button jenkins-button--primary jenkins-!-margin-top-6">
-                    ${%continue.button}
-                  </a>
+                  <j:choose>
+                    <j:when test="${it.safeFromParam != null}">
+                      <a href="${rootURL}${it.safeFromParam}"
+                        class="jenkins-button jenkins-button--primary jenkins-!-margin-top-6">
+                        ${%continue.button}
+                      </a>
+                    </j:when>
+                    <j:otherwise>
+                      <a href="${rootURL}/"
+                        class="jenkins-button jenkins-button--primary jenkins-!-margin-top-6">
+                        ${%continue.button}
+                      </a>
+                    </j:otherwise>
+                  </j:choose>
                 </div>
               </div>
             </div>
@@ -60,6 +70,9 @@
                 </div>
 
                 <form method="post" action="${rootURL}${it.securityCheckEndpoint}">
+                  <j:if test="${it.fromParam != null and it.fromParam != ''}">
+                    <input type="hidden" name="from" value="${it.fromParam}" />
+                  </j:if>
                   <div class="mfa-login-code-wrapper">
                     <div class="mfa-login-code-boxes">
                       <input type="text" class="mfa-login-digit" maxlength="1" data-index="0"

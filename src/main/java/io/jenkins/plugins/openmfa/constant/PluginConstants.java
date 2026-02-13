@@ -11,6 +11,12 @@ import lombok.NoArgsConstructor;
 public final class PluginConstants {
 
   /**
+   * Query/form parameter for post-MFA redirect target.
+   * Used to preserve the originally requested URL across the MFA flow.
+   */
+  public static final String FROM_PARAM = "from";
+
+  /**
    * Form parameter constants
    */
   public static final class FormParameters {
