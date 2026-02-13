@@ -1,11 +1,11 @@
 package io.jenkins.plugins.openmfa;
 
 import hudson.Extension;
+import hudson.model.InvisibleAction;
 import hudson.model.RootAction;
 import hudson.model.User;
 import io.jenkins.plugins.openmfa.base.MFAContext;
 import io.jenkins.plugins.openmfa.constant.PluginConstants;
-import io.jenkins.plugins.openmfa.constant.UIConstants;
 import io.jenkins.plugins.openmfa.service.SessionService;
 import io.jenkins.plugins.openmfa.util.JenkinsUtil;
 import org.kohsuke.stapler.HttpResponse;
@@ -17,7 +17,7 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
  * Action that provides the MFA login page where users enter their TOTP code.
  */
 @Extension
-public class MFALoginAction implements RootAction {
+public class MFALoginAction extends InvisibleAction implements RootAction {
 
   /**
    * Handles TOTP code verification via POST.
@@ -49,21 +49,11 @@ public class MFALoginAction implements RootAction {
     return HttpResponses.redirectViaContextPath("/");
   }
 
-  @Override
-  public String getDisplayName() {
-    return UIConstants.DisplayNames.MFA_LOGIN;
-  }
-
   /**
    * Get the form parameter name for TOTP code (for Jelly views).
    */
   public String getFormParamTotpCode() {
     return PluginConstants.FormParameters.TOTP_CODE;
-  }
-
-  @Override
-  public String getIconFileName() {
-    return null; // Don't show in sidebar
   }
 
   /**
