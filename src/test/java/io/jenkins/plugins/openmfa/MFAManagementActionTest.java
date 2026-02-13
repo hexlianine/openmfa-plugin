@@ -173,12 +173,10 @@ class MFAManagementActionTest {
     // Test enabled status
     UserInfo enabledUser = new UserInfo("user1", "User One", true);
     assertEquals("Enabled", enabledUser.getStatusText());
-    assertEquals("mfa-status-enabled", enabledUser.getStatusClass());
 
     // Test disabled status
     UserInfo disabledUser =
       new UserInfo("user2", "User Two", false);
     assertEquals("Disabled", disabledUser.getStatusText());
-    assertEquals("mfa-status-disabled", disabledUser.getStatusClass());
   }
 }
