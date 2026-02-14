@@ -7,11 +7,6 @@
   max-width: 500px;
 }
 
-.mfa-status-label {
-  font-weight: 500;
-  font-size: 14px;
-}
-
 .mfa-inline-flex {
   display: inline-flex;
   align-items: center;
@@ -26,21 +21,4 @@
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
-}
-
-.mfa-status-enabled {
-  background: var(--alert-success-bg-color, #d1fae5);
-  color: var(--alert-success-text-color, #065f46);
-}
-
-.mfa-status-disabled {
-  background: var(--alert-warning-bg-color, #fef3c7);
-  color: var(--alert-warning-text-color, #92400e);
-}
-
-.mfa-setup-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
 }

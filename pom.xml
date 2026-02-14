@@ -82,6 +82,12 @@
       <version>${zxing.version}</version>
     </dependency>
 
+    <!-- Ionicons API (icons in UI) -->
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>ionicons-api</artifactId>
+    </dependency>
+
     <!-- Lombok -->
     <dependency>
       <groupId>org.projectlombok</groupId>
