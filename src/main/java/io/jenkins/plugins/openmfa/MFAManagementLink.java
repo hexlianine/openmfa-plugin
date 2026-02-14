@@ -28,7 +28,7 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
  */
 @Log
 @Extension
-public class MFAManagementAction extends ManagementLink {
+public class MFAManagementLink extends ManagementLink {
 
   /**
    * Resets MFA for a specific user.

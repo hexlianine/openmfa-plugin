@@ -39,7 +39,7 @@ public class MyAction implements RootAction {
 
 ## ManagementLink
 
-**Package:** `hudson.model.ManagementLink`  
+**Package:** `hudson.model.ManagementLink`
 **Since:** Jenkins 1.194
 
 ManagementLink is an extension point for adding links to the Manage Jenkins page (`/manage`). It is intended for admin-only features.
@@ -76,7 +76,7 @@ ManagementLink is an extension point for adding links to the Manage Jenkins page
 
 ```java
 @Extension
-public class MFAManagementAction extends ManagementLink {
+public class MFAManagementLink extends ManagementLink {
   @Override
   public String getIconFileName() {
     return "symbol-lock-closed";
@@ -116,4 +116,4 @@ public class MFAManagementAction extends ManagementLink {
 - [ManagementLink Javadoc](https://javadoc.jenkins.io/hudson/model/ManagementLink.html)
 - [ManagementLink.Category](https://javadoc.jenkins.io/hudson/model/ManagementLink.Category.html)
 - [RootAction Javadoc](https://javadoc.jenkins.io/hudson/model/RootAction.html)
-- OpenMFA: `MFAManagementAction` (ManagementLink)
+- OpenMFA: `MFAManagementLink` (ManagementLink)

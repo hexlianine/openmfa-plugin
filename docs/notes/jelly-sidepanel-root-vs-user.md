@@ -11,7 +11,7 @@ Technical note on when to use `app` vs `targetUser` (or similar) for the side pa
 Stapler sets `it` automatically when it renders a Jelly view. The URL is routed to an object (via Stapler's request routing), and that object becomes `it`. For example:
 
 - Request `/user/joe/mfa-setup` → routed to `MFASetupAction` (attached to User "joe") → `it` = `MFASetupAction`
-- Request `/mfa-management` → routed to `MFAManagementAction` (at Jenkins root) → `it` = `MFAManagementAction`
+- Request `/mfa-management` → routed to `MFAManagementLink` (at Jenkins root) → `it` = `MFAManagementLink`
 
 The `it` variable is available in all Jelly tags and expressions within that view. Expressions like `${it.descriptor}` or `${it.targetUser}` resolve against this object.
 
@@ -30,11 +30,11 @@ When using `<l:layout>` with `<l:side-panel>`, the `it` attribute of `<st:includ
 
 ## Rationale
 
-- **Root-level actions** (e.g. `MFAManagementAction` at `/mfa-management`): The page is under Jenkins root. The side panel should show the Jenkins root side panel (build queue, manage Jenkins, etc.) → use `it="${app}"`.
+- **Root-level actions** (e.g. `MFAManagementLink` at `/mfa-management`): The page is under Jenkins root. The side panel should show the Jenkins root side panel (build queue, manage Jenkins, etc.) → use `it="${app}"`.
 
 - **User-scoped actions** (e.g. `MFASetupAction` at `/user/<id>/mfa-setup`): The page is under a user. The side panel should show the user's side panel (user config, profile, etc.) → use `it="${it.targetUser}"`.
 
 ## OpenMFA usage
 
 - **MFASetupAction** (`/user/<id>/mfa-setup`): `it="${it.targetUser}"` — user context
-- **MFAManagementAction** (`/mfa-management`): `it="${app}"` — root context
+- **MFAManagementLink** (`/mfa-management`): `it="${app}"` — root context

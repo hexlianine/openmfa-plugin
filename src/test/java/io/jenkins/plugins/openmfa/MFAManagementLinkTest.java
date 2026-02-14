@@ -23,15 +23,15 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.springframework.security.access.AccessDeniedException;
 
 @WithJenkins
-class MFAManagementActionTest {
+class MFAManagementLinkTest {
 
-  private MFAManagementAction action;
+  private MFAManagementLink action;
   private TOTPService totpService;
   private UserService userService;
 
   @BeforeEach
   void setUp() {
-    action = new MFAManagementAction();
+    action = new MFAManagementLink();
     totpService = MFAContext.i().getService(TOTPService.class);
     userService = MFAContext.i().getService(UserService.class);
   }
@@ -154,7 +154,7 @@ class MFAManagementActionTest {
   @Test
   void testManagementLinkRegistration(JenkinsRule j) {
     assertTrue(
-      ManagementLink.all().stream().anyMatch(MFAManagementAction.class::isInstance)
+      ManagementLink.all().stream().anyMatch(MFAManagementLink.class::isInstance)
     );
   }
 
