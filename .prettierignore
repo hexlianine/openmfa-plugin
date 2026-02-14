@@ -1,0 +1,4 @@
+# Build / generated
+target/
+work/
+*.jpi

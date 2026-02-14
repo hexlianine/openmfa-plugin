@@ -1,0 +1,14 @@
+{
+  "bracketSpacing": false,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "arrowParens": "avoid",
+  "overrides": [
+    {
+      "files": "*.jelly",
+      "options": {
+        "parser": "html"
+      }
+    }
+  ]
+}
