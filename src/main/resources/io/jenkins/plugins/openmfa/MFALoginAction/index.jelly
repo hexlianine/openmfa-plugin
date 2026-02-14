@@ -185,16 +185,12 @@
         </j:when>
         <j:otherwise>
           <div class="mfa-login-container">
-            <div
-              class="jenkins-card jenkins-!-margin-bottom-4"
-              style="max-width: 400px; width: 100%; text-align: center"
-            >
-              <div class="jenkins-card__content">
-                <h2 class="jenkins-!-margin-bottom-4">${%no.pending.auth}</h2>
+            <div style="width: 100%; text-align: center">
+              <l:notice title="${%no.pending.auth}" icon="symbol-status-yellow">
                 <p>
                   <j:out value="${%please.login(rootURL)}" escapeText="false" />
                 </p>
-              </div>
+              </l:notice>
             </div>
           </div>
         </j:otherwise>
