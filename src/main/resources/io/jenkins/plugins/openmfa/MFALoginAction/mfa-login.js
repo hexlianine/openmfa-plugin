@@ -1,9 +1,46 @@
 /**
  * MFA Login Script
  * Handles TOTP code input, notificationBar feedback, and lockout countdown.
+ * Stores remaining lockout in localStorage; blocks form submit and shows banner when lockout > 0.
  */
 (function () {
   'use strict';
+
+  const LOCKOUT_STORAGE_KEY = 'openmfa.lockoutEndTime';
+
+  function getStoredLockoutRemaining() {
+    try {
+      const endTime = parseInt(
+        localStorage.getItem(LOCKOUT_STORAGE_KEY),
+        10,
+      );
+      if (!endTime || endTime <= Date.now()) {
+        localStorage.removeItem(LOCKOUT_STORAGE_KEY);
+        return null;
+      }
+      return {
+        remainingSeconds: Math.ceil((endTime - Date.now()) / 1000),
+        endTime,
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function setStoredLockout(remainingSeconds) {
+    try {
+      localStorage.setItem(
+        LOCKOUT_STORAGE_KEY,
+        String(Date.now() + remainingSeconds * 1000),
+      );
+    } catch (e) {}
+  }
+
+  function clearStoredLockout() {
+    try {
+      localStorage.removeItem(LOCKOUT_STORAGE_KEY);
+    } catch (e) {}
+  }
 
   const digits = document.querySelectorAll('.mfa-login-digit');
   const hidden = document.getElementById('mfa-login-code-hidden');
@@ -130,18 +167,10 @@
       countdownEl.textContent = formatTime(remaining);
 
       if (remaining <= 0) {
+        clearStoredLockout();
         lockoutBanner.classList.remove('mfa-lockout-visible');
         lockoutBanner.classList.add('mfa-lockout-hidden');
         enableForm();
-        // Remove error params from URL without reload
-        const url = new URL(window.location.href);
-        url.searchParams.delete('error');
-        url.searchParams.delete('remaining');
-        window.history.replaceState(
-          {},
-          document.title,
-          url.pathname + url.search,
-        );
         return;
       }
 
@@ -153,21 +182,48 @@
   }
 
   /**
-   * Initializes error handling based on URL parameters.
+   * Initializes error handling and lockout from server (banner data) or stored value.
+   * If lockout remaining > 0, shows banner and blocks form submit (no server request).
    */
   function initErrorHandling() {
     const urlParams = new URLSearchParams(window.location.search);
-    const error = urlParams.get('error');
-
-    if (error === 'invalid' && typeof notificationBar !== 'undefined') {
-      const msgEl = document.getElementById('mfa-invalid-code-msg');
-      const msg = msgEl ? msgEl.textContent : 'Invalid verification code.';
-      notificationBar.show(msg, notificationBar.ERROR);
-    } else if (error === 'locked') {
-      const remaining = parseInt(urlParams.get('remaining'), 10);
-      if (!isNaN(remaining) && remaining > 0) {
-        handleLockout(remaining);
+    if (urlParams.get('error') === 'invalid') {
+      if (typeof notificationBar !== 'undefined') {
+        const msgEl = document.getElementById('mfa-invalid-code-msg');
+        const msg = msgEl ? msgEl.textContent : 'Invalid verification code.';
+        notificationBar.show(msg, notificationBar.ERROR);
       }
+    }
+
+    let remaining = null;
+    const lockoutBanner = document.getElementById('mfa-lockout-banner');
+    if (lockoutBanner) {
+      const fromBanner = parseInt(
+        lockoutBanner.getAttribute('data-remaining-lockout'),
+        10,
+      );
+      if (!isNaN(fromBanner) && fromBanner > 0) {
+        remaining = fromBanner;
+        setStoredLockout(remaining);
+      }
+    }
+    if (remaining == null) {
+      const stored = getStoredLockoutRemaining();
+      if (stored && stored.remainingSeconds > 0) {
+        remaining = stored.remainingSeconds;
+      }
+    }
+    if (remaining != null && remaining > 0) {
+      handleLockout(remaining);
+    }
+
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        const lockout = getStoredLockoutRemaining();
+        if (lockout && lockout.remainingSeconds > 0) {
+          e.preventDefault();
+        }
+      });
     }
   }
 
@@ -175,5 +231,9 @@
   if (digits.length > 0) {
     initDigitInputs();
   }
-  initErrorHandling();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initErrorHandling);
+  } else {
+    initErrorHandling();
+  }
 })();

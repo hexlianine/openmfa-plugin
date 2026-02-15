@@ -37,9 +37,10 @@
         <div class="mfa-mgmt-header">
           <l:app-bar title="${%title}">
             <a href="${rootURL}/configureSecurity" class="jenkins-button">
-              <l:icon src="symbol-settings" class="icon-sm" /> ${%config.link} </a>
+              <l:icon src="symbol-settings" class="icon-sm" /> ${%config.link}
+            </a>
           </l:app-bar>
-          <p style="color: var(--text-color-secondary); margin-top:-26px;">
+          <p style="color: var(--text-color-secondary); margin-top: -26px">
             ${%subtitle}
           </p>
         </div>
@@ -73,7 +74,7 @@
             <j:set var="users" value="${it.getAllUsers()}" />
             <j:choose>
               <j:when test="${empty(users)}">
-                <l:notice title="${%no.users}" icon="symbol-people"/>
+                <l:notice title="${%no.users}" icon="symbol-people" />
               </j:when>
               <j:otherwise>
                 <div>

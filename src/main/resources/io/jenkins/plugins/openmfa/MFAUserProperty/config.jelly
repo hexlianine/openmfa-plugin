@@ -5,9 +5,7 @@
   xmlns:st="jelly:stapler"
   xmlns:l="/lib/layout"
 >
-  <st:adjunct
-    includes="io.jenkins.plugins.openmfa.MFAUserProperty.mfa-user"
-  />
+  <st:adjunct includes="io.jenkins.plugins.openmfa.MFAUserProperty.mfa-user" />
 
   <f:section>
     <f:entry>

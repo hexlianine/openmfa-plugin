@@ -5,7 +5,6 @@ import static io.jenkins.plugins.openmfa.constant.PluginConstants.RateLimit.LOCK
 import static io.jenkins.plugins.openmfa.constant.PluginConstants.RateLimit.MAX_ATTEMPTS;
 
 import io.jenkins.plugins.openmfa.base.Service;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -102,7 +101,8 @@ public class RateLimitService {
     log.fine(
       String.format(
         "Failed attempt recorded for user: %s, total attempts: %d",
-        username, attempts.size()
+        username,
+        attempts.size()
       )
     );
 
@@ -112,7 +112,8 @@ public class RateLimitService {
       log.warning(
         String.format(
           "User %s locked out for %d seconds due to too many failed MFA attempts",
-          username, LOCKOUT_DURATION_MS / 1000
+          username,
+          LOCKOUT_DURATION_MS / 1000
         )
       );
     }
@@ -123,12 +124,6 @@ public class RateLimitService {
    */
   private void cleanupExpiredAttempts(CopyOnWriteArrayList<Long> attempts, long now) {
     long cutoff = now - ATTEMPT_WINDOW_MS;
-    Iterator<Long> iterator = attempts.iterator();
-    while (iterator.hasNext()) {
-      if (iterator.next() < cutoff) {
-        attempts.remove(iterator.next());
-      }
-    }
     // Use removeIf for thread-safe removal
     attempts.removeIf(timestamp -> timestamp < cutoff);
   }

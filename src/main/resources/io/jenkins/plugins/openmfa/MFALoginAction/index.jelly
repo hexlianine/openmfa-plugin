@@ -6,9 +6,6 @@
   xmlns:f="/lib/form"
 >
   <l:layout title="${%title}" norefresh="true">
-    <st:adjunct
-      includes="io.jenkins.plugins.openmfa.MFALoginAction.mfa-login"
-    />
     <l:main-panel>
       <j:choose>
         <j:when test="${it.hasPendingAuth() and it.isSessionMFAVerified()}">
@@ -59,26 +56,28 @@
           </div>
         </j:when>
         <j:when test="${it.hasPendingAuth()}">
-          <span id="mfa-invalid-code-msg" style="display: none"
-            >${%error.invalid.code}</span
-          >
+          <span id="mfa-invalid-code-msg" style="display: none">
+            ${%error.invalid.code}
+          </span>
 
-          <!-- Lockout banner -->
+          <!-- Lockout banner; data used by the script for initial lockout redirect -->
           <div
             id="mfa-lockout-banner"
-            class="jenkins-banner jenkins-banner--warning mfa-lockout-banner mfa-lockout-hidden"
+            class="jenkins-alert jenkins-alert-warning mfa-lockout-banner mfa-lockout-hidden"
+            data-remaining-lockout="${it.remainingLockoutSeconds}"
+            data-from-param="${it.fromParam != null ? it.fromParam : ''}"
           >
             <div class="mfa-lockout-content">
               <l:icon src="symbol-lock-closed" class="icon-lg" />
               <div class="mfa-lockout-text">
                 <span>${%error.locked.title}</span>
-                <span
-                  >${%error.locked.message}
+                <span>
+                  ${%error.locked.message}
                   <span
                     id="mfa-lockout-countdown"
                     class="mfa-lockout-countdown"
-                  ></span
-                ></span>
+                  ></span>
+                </span>
               </div>
             </div>
           </div>
@@ -182,6 +181,10 @@
               </div>
             </div>
           </div>
+
+          <st:adjunct
+            includes="io.jenkins.plugins.openmfa.MFALoginAction.mfa-login"
+          />
         </j:when>
         <j:otherwise>
           <div class="mfa-login-container">
