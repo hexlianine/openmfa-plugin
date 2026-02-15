@@ -7,7 +7,10 @@
 >
   <l:layout title="${%title}" permission="${app.ADMINISTER}">
     <st:adjunct
-      includes="io.jenkins.plugins.openmfa.MFAManagementLink.mfa-management"
+      includes="io.jenkins.plugins.openmfa.MFAManagementLink.mfa-mgmt"
+    />
+    <st:adjunct
+      includes="io.jenkins.plugins.openmfa.MFAManagementLink.mfa-mgmt-pagi"
     />
     <l:side-panel>
       <st:include page="sidepanel.jelly" it="${app}" optional="true" />
@@ -70,6 +73,16 @@
 
         <div class="jenkins-!-margin-bottom-4">
           <h3>${%users.title}</h3>
+          <div class="mfa-mgmt-page-size jenkins-!-margin-bottom-2">
+            <label for="mfa-page-size">${%pagination.show}</label>
+            <select id="mfa-page-size" onchange="changePageSize(this.value)">
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span>${%pagination.entries}</span>
+          </div>
           <div class="jenkins-!-padding-0">
             <j:set var="users" value="${it.getAllUsers()}" />
             <j:choose>
@@ -78,7 +91,10 @@
               </j:when>
               <j:otherwise>
                 <div>
-                  <table class="jenkins-table jenkins-!-margin-0">
+                  <table
+                    id="mfa-users-table"
+                    class="jenkins-table jenkins-!-margin-0"
+                  >
                     <thead>
                       <tr>
                         <th>${%table.user}</th>
@@ -94,7 +110,7 @@
                           value="${user.mfaEnabled ? 'success' : 'warning'}"
                         />
 
-                        <tr>
+                        <tr class="mfa-user-row">
                           <td class="mfa-mgmt-user-cell">
                             <a href="${it.getSetupUri(user.userId)}">
                               ${user.userId}
@@ -158,6 +174,63 @@
                     </tbody>
                   </table>
                 </div>
+
+                <!-- Pagination controls -->
+                <div id="mfa-pagination" class="mfa-mgmt-pagination jenkins-!-margin-top-2">
+                  <div class="mfa-mgmt-pagination-info">
+                    <span id="mfa-pagination-info"></span>
+                  </div>
+                  <div class="mfa-mgmt-pagination-controls">
+                    <button
+                      type="button"
+                      class="mfa-mgmt-pagination-btn"
+                      id="mfa-page-first"
+                      onclick="goToPage(1)"
+                      title="${%pagination.first}"
+                    >
+                      &#171;
+                    </button>
+                    <button
+                      type="button"
+                      class="mfa-mgmt-pagination-btn"
+                      id="mfa-page-prev"
+                      onclick="goToPage(currentPage - 1)"
+                      title="${%pagination.previous}"
+                    >
+                      &#8249;
+                    </button>
+                    <span
+                      class="mfa-mgmt-pagination-pages"
+                      id="mfa-page-numbers"
+                    ></span>
+                    <button
+                      type="button"
+                      class="mfa-mgmt-pagination-btn"
+                      id="mfa-page-next"
+                      onclick="goToPage(currentPage + 1)"
+                      title="${%pagination.next}"
+                    >
+                      &#8250;
+                    </button>
+                    <button
+                      type="button"
+                      class="mfa-mgmt-pagination-btn"
+                      id="mfa-page-last"
+                      onclick="goToPage(totalPages)"
+                      title="${%pagination.last}"
+                    >
+                      &#187;
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Hidden data for pagination info text -->
+                <script type="text/javascript">
+                  let paginationShowingText = '${%pagination.showing}';
+                  let paginationToText = '${%pagination.to}';
+                  let paginationOfText = '${%pagination.of}';
+                  let paginationEntriesText = '${%pagination.entries.label}';
+                </script>
               </j:otherwise>
             </j:choose>
           </div>
