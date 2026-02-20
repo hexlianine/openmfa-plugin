@@ -52,6 +52,15 @@
         ></span>
       </j:if>
 
+      <span
+        id="mfa-disable-dialog-messages"
+        data-title="${%disable.confirm.title}"
+        data-message="${%disable.confirm.message}"
+        data-cancel-text="${%disable.confirm.cancel}"
+        data-ok-text="${%disable.button}"
+      >
+      </span>
+
       <div class="mfa-container">
         <j:set var="mfaProperty" value="${it.getMFAProperty()}" />
 
@@ -65,9 +74,9 @@
             </div>
 
             <div class="mfa-actions jenkins-!-margin-bottom-6">
-              <form method="post" action="disable">
+              <form method="post" action="disable" class="mfa-disable-form">
                 <button
-                  type="submit"
+                  type="button"
                   class="jenkins-button jenkins-!-destructive-color"
                 >
                   ${%disable.button}
