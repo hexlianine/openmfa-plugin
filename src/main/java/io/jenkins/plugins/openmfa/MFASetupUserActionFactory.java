@@ -9,7 +9,7 @@ import java.util.Collections;
 import jenkins.model.Jenkins;
 
 /**
- * Adds the MFA setup action under user pages: /user/<id>/mfa-setup.
+ * Adds the MFA setup action under user pages: /user/&lt;id&gt;/mfa-setup.
  */
 @Extension
 public class MFASetupUserActionFactory extends TransientUserActionFactory {

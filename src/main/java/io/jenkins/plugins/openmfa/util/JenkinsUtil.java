@@ -7,6 +7,7 @@ import java.util.Optional;
 import jenkins.model.Jenkins;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JenkinsUtil {

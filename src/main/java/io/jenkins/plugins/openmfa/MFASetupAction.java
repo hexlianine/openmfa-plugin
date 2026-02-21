@@ -182,7 +182,7 @@ public class MFASetupAction extends InvisibleAction {
 
   /**
    * The user whose page this action is mounted under (e.g.
-   * /user/<id>/mfa-setup).
+   * /user/&lt;id&gt;/mfa-setup).
    */
   public User getTargetUser() {
     return targetUser;

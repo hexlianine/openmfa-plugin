@@ -124,7 +124,7 @@ public final class TOTPConstants {
 
   /**
    * URI format string for TOTP provisioning Format:
-   * otpauth://totp/issuer:username?secret=secret&issuer=issuer
+   * otpauth://totp/issuer:username?secret=secret&amp;issuer=issuer
    */
   public static final String TOTP_URI_FORMAT =
     "otpauth://totp/%s:%s?secret=%s&issuer=%s";

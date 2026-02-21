@@ -84,8 +84,6 @@ public class MFAManagementLink extends ManagementLink {
    *
    * @param userId
    *          The ID of the user to modify MFA for
-   * @param enable
-   *          ignored, present for API symmetry
    * @return HTTP response to redirect to user's MFA setup page
    */
   @RequirePOST
