@@ -104,7 +104,7 @@ Example shape (keys may vary by controller/JCasC export; use exported keys as so
 ```yaml
 unclassified:
   <openmfa-global-config-key>:
-    issuer: "Jenkins"
+    issuer: 'Jenkins'
     requireMFA: true
 ```
 
@@ -119,9 +119,11 @@ unclassified:
 The `maven-hpi-plugin` offers important commands for Jenkins plugin development:
 
 - **Build and package your plugin (.hpi):**
+
   ```bash
   mvn install
   ```
+
   This compiles the plugin and creates the `.hpi` file (e.g., `target/openmfa-plugin.hpi`), suitable for installation in Jenkins.
 
 - **Run Jenkins in development mode with your plugin:**
@@ -130,15 +132,14 @@ The `maven-hpi-plugin` offers important commands for Jenkins plugin development:
   ```
   This starts a local Jenkins controller instance with your plugin pre-installed, typically at [http://localhost:8080/jenkins/](http://localhost:8080/jenkins/).
 
-
 ### VS Code Debugging
 
 If you use Visual Studio Code, the repo includes a sample `.vscode/launch.json` for debugging Jenkins plugin development:
 
-- **Debug Jenkins Plugin**:  
+- **Debug Jenkins Plugin**:
   Attaches to a Jenkins process started with `mvn hpi:run` in debug mode (`-Dmaven.surefire.debug`), listening on port `5005`.
 
-- **Debug Jenkins Plugin (mvnDebug)**:  
+- **Debug Jenkins Plugin (mvnDebug)**:
   Attaches to Jenkins launched with `mvnDebug`, typically listening on port `8000`.
 
 To use:
@@ -159,6 +160,7 @@ You can configure your development environment by creating a `.env` file in the 
   ```
 
 **How to use:**
+
 1. Copy `.env.example` to `.env`:
    ```bash
    cp .env.example .env
@@ -166,23 +168,27 @@ You can configure your development environment by creating a `.env` file in the 
 2. Edit `.env`, setting `JAVA_HOME` to your local Java installation and any other variables as needed.
 3. The `.env` file is automatically loaded when running development commands via the provided `.vscode/run.sh` (used in `vscode/tasks.json`) script, ensuring your environment variables (like `JAVA_HOME`) are available.
 
-**Tip:**  
+**Tip:**
 `.env` is ignored by git, so your local secrets and paths are not committed. Use `.env.example` as a starting point for other developers.
+
 ### Code Style
 
 This project uses Spotless with Eclipse formatter rules from `fmt.xml`. It also ships a `prek` config in `.pre-commit-config.yaml`.
 
 - Install git hooks with `prek`:
+
   ```bash
   prek install
   ```
 
 - Run all configured checks/formatters with `prek`:
+
   ```bash
   prek run --all-files
   ```
 
 - Check formatting:
+
   ```bash
   mvn spotless:check
   ```
