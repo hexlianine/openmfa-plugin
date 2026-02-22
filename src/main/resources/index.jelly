@@ -2,8 +2,21 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
   <div>
     <p>
-      This plugin allows you to configure Multi-Factor Authentication for
-      Jenkins.
+      OpenMFA is a Jenkins plugin that adds TOTP-based MFA for interactive
+      logins. It introduces setup, verification, and management flows for user
+      accounts inside Jenkins. It provides the following features:
+      <ul>
+        <li>
+          TOTP MFA using authenticator apps (RFC 6238 compatible), such as
+          Google Authenticator, Authy, or Microsoft Authenticator
+        </li>
+        <li>QR-based enrollment flow for end users</li>
+        <li>Global admin configuration for issuer and enforcement</li>
+        <li>MFA user management page for administrators</li>
+        <li>Session-based MFA/2FA verification after primary login</li>
+        <li>Basic brute-force protection on code verification attempts</li>
+        <li>Supports Jenkins dark theme for all UI elements</li>
+      </ul>
     </p>
   </div>
 </j:jelly>
