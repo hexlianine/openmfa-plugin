@@ -58,4 +58,21 @@ class MFAGlobalConfigurationTest {
       24, config.getRememberMfaHours(), "Default remember-MFA should be 24h"
     );
   }
+
+  @Test
+  void testIssuerConfigurationPersistence(JenkinsRule j) throws Exception {
+    MFAGlobalConfiguration config = MFAGlobalConfiguration.get();
+    assertEquals("Jenkins", config.getIssuer());
+
+    config.setIssuer("  Prod Jenkins  ");
+    assertEquals("Prod Jenkins", config.getIssuer());
+    config.save();
+
+    config.setIssuer("Temporary");
+    config.load();
+    assertEquals("Prod Jenkins", config.getIssuer());
+
+    config.setIssuer("   ");
+    assertEquals("Jenkins", config.getIssuer());
+  }
 }
